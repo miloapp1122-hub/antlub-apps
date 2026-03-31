@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Antioqueña de Lubricantes — Mensajeros</title>
+<style>
+  :root {
+    --azul:#1F497D; --azul2:#2C3E50; --verde:#1E8449;
+    --naranja:#E67E22; --rojo:#C0392B; --gris:#F4F6F8; --blanco:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif;}
+  body{background:var(--gris);min-height:100vh;}
+  .header{background:var(--azul);color:white;padding:14px 16px 10px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+  .header h1{font-size:16px;font-weight:bold;}
+  .header p{font-size:11px;opacity:.85;margin-top:2px;}
+  .tabs{display:flex;background:var(--azul2);overflow-x:auto;scrollbar-width:none;}
+  .tab{flex:1;min-width:80px;padding:10px 6px;text-align:center;color:rgba(255,255,255,.65);font-size:12px;font-weight:bold;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s;}
+  .tab.active{color:white;border-bottom-color:var(--naranja);}
+  .section{display:none;padding:14px 12px;max-width:500px;margin:0 auto;}
+  .section.active{display:block;}
+  .card{background:white;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:16px;margin-bottom:14px;}
+  .card-title{font-size:13px;font-weight:bold;color:var(--azul);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--gris);display:flex;align-items:center;gap:6px;}
+  label{font-size:12px;color:#555;font-weight:bold;display:block;margin-bottom:4px;}
+  input,select,textarea{width:100%;padding:10px 12px;border:1.5px solid #DDD;border-radius:8px;font-size:14px;color:#222;background:var(--gris);margin-bottom:12px;transition:border-color .2s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--azul);background:white;}
+  textarea{resize:none;height:70px;}
+  .btn{width:100%;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:bold;cursor:pointer;transition:transform .1s,opacity .2s;margin-bottom:8px;}
+  .btn:active{transform:scale(.97);}
+  .btn-azul{background:var(--azul);color:white;}
+  .btn-verde{background:var(--verde);color:white;}
+  .btn-naranja{background:var(--naranja);color:white;}
+  .btn-rojo{background:var(--rojo);color:white;}
+  .btn-gris{background:#95A5A6;color:white;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .time-chip{display:inline-flex;align-items:center;gap:6px;background:var(--gris);border-radius:20px;padding:6px 12px;font-size:13px;font-weight:bold;color:var(--azul2);margin-bottom:12px;}
+  .time-chip.set{background:#D5F0E3;color:var(--verde);}
+  .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold;}
+  .badge-verde{background:#D5F0E3;color:var(--verde);}
+  .badge-naranja{background:#FDF3E2;color:var(--naranja);}
+  .badge-rojo{background:#FEECEC;color:var(--rojo);}
+  .badge-azul{background:#D5E8F0;color:var(--azul);}
+  .registro{background:white;border-radius:8px;padding:12px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-left:4px solid var(--azul);}
+  .registro.entregado{border-left-color:var(--verde);}
+  .registro.no-entrega{border-left-color:var(--rojo);}
+  .registro-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .registro-titulo{font-weight:bold;font-size:13px;color:var(--azul2);}
+  .registro-detalle{font-size:12px;color:#666;line-height:1.6;}
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .kpi-card{background:white;border-radius:10px;padding:14px 10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.07);}
+  .kpi-valor{font-size:26px;font-weight:bold;color:var(--azul);}
+  .kpi-label{font-size:11px;color:#888;margin-top:2px;}
+  .rank-item{display:flex;align-items:center;gap:10px;background:white;border-radius:8px;padding:12px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+  .rank-pos{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px;flex-shrink:0;}
+  .rank-1{background:#FFD700;color:#7D5800;}
+  .rank-2{background:#C0C0C0;color:#444;}
+  .rank-3{background:#CD7F32;color:white;}
+  .rank-n{background:var(--gris);color:var(--azul2);}
+  .rank-info{flex:1;}
+  .rank-nombre{font-weight:bold;font-size:13px;color:var(--azul2);}
+  .rank-stats{font-size:11px;color:#777;}
+  .rank-tiempo{font-weight:bold;font-size:14px;color:var(--verde);}
+  #firmaCanvas{border:2px dashed #CCC;border-radius:8px;width:100%;height:110px;cursor:crosshair;background:white;display:block;margin-bottom:8px;touch-action:none;}
+  #firmaCanvas.firmado{border-color:var(--verde);border-style:solid;}
+
+  /* ── FOTO STYLES ── */
+  .foto-zona{border:2px dashed #CCC;border-radius:10px;padding:16px;text-align:center;margin-bottom:12px;cursor:pointer;transition:all .2s;background:var(--gris);}
+  .foto-zona:hover{border-color:var(--azul);background:#EEF3FA;}
+  .foto-zona.con-foto{border-color:var(--verde);border-style:solid;background:#F0FFF4;}
+  .foto-icon{font-size:32px;margin-bottom:6px;}
+  .foto-label{font-size:13px;color:#666;font-weight:bold;}
+  .foto-sub{font-size:11px;color:#AAA;margin-top:2px;}
+  .foto-preview-wrap{position:relative;margin-bottom:8px;}
+  .foto-preview{width:100%;max-height:200px;object-fit:cover;border-radius:8px;display:block;}
+  .foto-del-btn{position:absolute;top:6px;right:6px;background:rgba(192,57,43,.9);color:white;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .fotos-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  .foto-thumb-wrap{position:relative;}
+  .foto-thumb{width:100%;height:90px;object-fit:cover;border-radius:8px;border:2px solid #DDD;}
+  .foto-thumb.ok{border-color:var(--verde);}
+  .foto-thumb-del{position:absolute;top:4px;right:4px;background:rgba(192,57,43,.85);color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;}
+  .foto-count-badge{background:var(--verde);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:bold;}
+  input[type=file]{display:none;}
+
+  .empty-state{text-align:center;padding:30px 20px;color:#AAA;font-size:13px;}
+  .empty-state .icon{font-size:36px;margin-bottom:8px;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--azul2);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:bold;opacity:0;transition:opacity .3s;z-index:999;white-space:nowrap;}
+  .toast.show{opacity:1;}
+  .separator{height:1px;background:var(--gris);margin:10px 0;}
+  .small{font-size:11px;color:#888;}
+  .text-center{text-align:center;}
+  .mt-8{margin-top:8px;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🚚 Antioqueña de Lubricantes</h1>
+  <p>Sistema de Control de Entregas</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('registrar',this)">📦 Registrar</div>
+  <div class="tab" onclick="showTab('mis-entregas',this)">📋 Mis entregas</div>
+  <div class="tab" onclick="showTab('dashboard',this)">📊 Dashboard</div>
+  <div class="tab" onclick="showTab('ranking',this)">🏆 Ranking</div>
+</div>
+
+<!-- ══ TAB REGISTRAR ══ -->
+<div id="tab-registrar" class="section active">
+
+  <div class="card">
+    <div class="card-title">👤 Identificación</div>
+    <label>Nombre del mensajero</label>
+    <input type="text" id="sel-mensajero" placeholder="Escribe tu nombre completo" autocomplete="name">
+  </div>
+
+  <div class="card">
+    <div class="card-title">📄 Datos del pedido</div>
+    <label>N° Pedido / Factura</label>
+    <input type="text" id="num-pedido" placeholder="Ej: 29458" inputmode="numeric">
+    <label>Cliente</label>
+    <input type="text" id="nombre-cliente" placeholder="Razón social del cliente">
+    <label>Dirección de entrega</label>
+    <input type="text" id="direccion" placeholder="Dirección completa">
+    <label>Ciudad / Zona</label>
+    <input type="text" id="ciudad" placeholder="Ej: Medellín - Laureles">
+  </div>
+
+  <!-- ══ FOTO FACTURA / REMISIÓN ══ -->
+  <div class="card">
+    <div class="card-title">
+      📸 Foto de la factura / remisión
+      <span id="badge-fotos-fac" class="foto-count-badge" style="display:none">0</span>
+    </div>
+    <p class="small" style="margin-bottom:10px;">
+      Toma foto de la factura o remisión física antes de salir. Puedes agregar hasta 3 fotos.
+    </p>
+    <div id="previews-factura" class="fotos-grid"></div>
+    <div class="foto-zona" id="zona-factura" onclick="document.getElementById('inp-factura').click()">
+      <div class="foto-icon">🧾</div>
+      <div class="foto-label">Toca para fotografiar la factura</div>
+      <div class="foto-sub">Cámara o galería • JPG/PNG</div>
+    </div>
+    <input type="file" id="inp-factura" accept="image/*" capture="environment" multiple onchange="agregarFotos('factura',this)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">⏱ Registro de tiempos</div>
+    <label>1️⃣ Hora de salida del despacho</label>
+    <div class="time-chip" id="chip-salida">⏰ Sin registrar</div>
+    <button class="btn btn-azul" id="btn-salida" onclick="registrarTiempo('salida')">🚀 Marcar salida del despacho</button>
+    <div class="separator"></div>
+    <label>2️⃣ Hora de llegada al cliente</label>
+    <div class="time-chip" id="chip-llegada">⏰ Sin registrar</div>
+    <button class="btn btn-naranja" id="btn-llegada" onclick="registrarTiempo('llegada')" disabled>📍 Marcar llegada al cliente</button>
+    <div class="separator"></div>
+    <label>3️⃣ Estado de la entrega</label>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="btn btn-verde" style="flex:1;padding:10px;" onclick="setEstado('Entregado')">✅ Entregado</button>
+      <button class="btn btn-rojo"  style="flex:1;padding:10px;" onclick="setEstado('No entregado')">❌ No entregado</button>
+    </div>
+    <div id="estado-sel" class="text-center" style="margin-bottom:12px;"></div>
+    <div id="motivo-cont" style="display:none">
+      <label>Motivo de no entrega</label>
+      <select id="motivo">
+        <option value="">— Selecciona motivo —</option>
+        <option>Cliente no estaba / local cerrado</option>
+        <option>Cliente rechazó el pedido</option>
+        <option>Dirección incorrecta o no encontrada</option>
+        <option>Cliente solicitó reprogramar</option>
+        <option>Problema con el producto (daño, faltante)</option>
+        <option>Otro motivo</option>
+      </select>
+    </div>
+    <label>4️⃣ Hora de entrega / finalización</label>
+    <div class="time-chip" id="chip-entrega">⏰ Sin registrar</div>
+    <button class="btn btn-verde" id="btn-entrega" onclick="registrarTiempo('entrega')" disabled>🏁 Marcar entrega completada</button>
+  </div>
+
+  <!-- ══ FOTO EVIDENCIA DE ENTREGA ══ -->
+  <div class="card">
+    <div class="card-title">
+      📷 Foto evidencia de entrega
+      <span id="badge-fotos-ent" class="foto-count-badge" style="display:none">0</span>
+    </div>
+    <p class="small" style="margin-bottom:10px;">
+      Fotografía el producto entregado, la puerta del local, o al cliente recibiendo. Hasta 3 fotos.
+    </p>
+    <div id="previews-entrega" class="fotos-grid"></div>
+    <div class="foto-zona" id="zona-entrega" onclick="document.getElementById('inp-entrega').click()">
+      <div class="foto-icon">📦</div>
+      <div class="foto-label">Toca para fotografiar la entrega</div>
+      <div class="foto-sub">Cámara o galería • JPG/PNG</div>
+    </div>
+    <input type="file" id="inp-entrega" accept="image/*" capture="environment" multiple onchange="agregarFotos('entrega',this)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">✍️ Firma del cliente</div>
+    <label>Firma del cliente (desliza el dedo)</label>
+    <canvas id="firmaCanvas"></canvas>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-gris" style="flex:1;padding:8px;font-size:13px;" onclick="limpiarFirma()">🗑 Limpiar</button>
+      <button class="btn btn-azul" style="flex:1;padding:8px;font-size:13px;" onclick="confirmarFirma()">✅ Confirmar firma</button>
+    </div>
+    <p id="firma-status" class="small text-center mt-8"></p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Observaciones</div>
+    <textarea id="observaciones" placeholder="Ej: Cliente solicitó dejar en portería, producto en buen estado, etc."></textarea>
+  </div>
+
+  <button class="btn btn-verde" onclick="guardarEntrega()" style="font-size:16px;padding:15px;">💾 Guardar registro de entrega</button>
+  <button class="btn btn-gris" onclick="limpiarFormulario()">🔄 Limpiar formulario</button>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ══ TAB MIS ENTREGAS ══ -->
+<div id="tab-mis-entregas" class="section">
+  <div class="card">
+    <div class="card-title">📋 Mis entregas del día</div>
+    <input type="text" id="filtro-mensajero" placeholder="Filtrar por nombre de mensajero..." oninput="renderMisEntregas()">
+  </div>
+  <div id="lista-entregas"><div class="empty-state"><div class="icon">📭</div>No hay entregas registradas aún</div></div>
+  <button class="btn btn-naranja mt-8" onclick="exportarCSV()">📥 Exportar a Excel (CSV)</button>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ══ TAB DASHBOARD ══ -->
+<div id="tab-dashboard" class="section">
+  <div class="card">
+    <div class="card-title">📊 Resumen del día — <span id="fecha-hoy"></span></div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-valor" id="kpi-total">0</div><div class="kpi-label">Total entregas</div></div>
+      <div class="kpi-card"><div class="kpi-valor" style="color:var(--verde)" id="kpi-entregados">0</div><div class="kpi-label">Entregados ✅</div></div>
+      <div class="kpi-card"><div class="kpi-valor" style="color:var(--rojo)" id="kpi-no-entregados">0</div><div class="kpi-label">No entregados ❌</div></div>
+      <div class="kpi-card"><div class="kpi-valor" style="color:var(--naranja)" id="kpi-efectividad">0%</div><div class="kpi-label">Efectividad</div></div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-valor" style="color:var(--azul);font-size:20px;" id="kpi-tiempo-prom">—</div><div class="kpi-label">Tiempo prom. entrega</div></div>
+      <div class="kpi-card"><div class="kpi-valor" style="color:var(--azul);font-size:20px;" id="kpi-fotos">0</div><div class="kpi-label">Fotos capturadas 📸</div></div>
+    </div>
+  </div>
+  <div class="card" id="card-motivos" style="display:none">
+    <div class="card-title">❌ Motivos de no entrega</div>
+    <div id="lista-motivos"></div>
+  </div>
+  <button class="btn btn-azul" onclick="actualizarDashboard()">🔄 Actualizar datos</button>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ══ TAB RANKING ══ -->
+<div id="tab-ranking" class="section">
+  <div class="card">
+    <div class="card-title">🏆 Ranking mensajeros — <span id="fecha-ranking"></span></div>
+    <p class="small" style="margin-bottom:12px;">Menor tiempo promedio + mayor efectividad + más fotos de evidencia</p>
+    <div id="lista-ranking"><div class="empty-state"><div class="icon">🏆</div>Sin datos suficientes aún</div></div>
+  </div>
+  <div style="height:20px;"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ══ CONFIGURACIÓN APPS SCRIPT ══
+const APPS_SCRIPT_URL = 'PEGA_AQUI_LA_URL_DEL_SCRIPT';
+
+async function enviarAlScript(datos) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PEGA_AQUI')) {
+    console.log('Apps Script no configurado — guardando solo localmente');
+    return { ok: true, local: true };
+  }
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(datos),
+      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors'
+    });
+    return { ok: true };
+  } catch(e) {
+    console.error('Error enviando al script:', e);
+    return { ok: false, error: e.message };
+  }
+}
+
+// ── Estado global ──────────────────────────────────────────────────────────
+let entregas = JSON.parse(localStorage.getItem('entregas_antlub_v2') || '[]');
+let estadoActual = '';
+let firmaConfirmada = false;
+let tiempos = {salida:null, llegada:null, entrega:null};
+let fotosData = {factura:[], entrega:[]};  // base64 de fotos
+const MAX_FOTOS = 3;
+
+// Canvas firma
+const canvas = document.getElementById('firmaCanvas');
+const ctx = canvas.getContext('2d');
+let firmando = false, ultimoPunto = null;
+
+window.onload = () => {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+  document.getElementById('fecha-hoy').textContent     = hoy();
+  document.getElementById('fecha-ranking').textContent = hoy();
+  actualizarDashboard();
+  renderRanking();
+  setupFirma();
+};
+
+function hoy(){ return new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+function ahora(){ return new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+
+// ── Tabs ───────────────────────────────────────────────────────────────────
+function showTab(tab, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  el.classList.add('active');
+  if(tab==='mis-entregas') renderMisEntregas();
+  if(tab==='dashboard')    actualizarDashboard();
+  if(tab==='ranking')      renderRanking();
+}
+
+// ── Mensajero ──────────────────────────────────────────────────────────────
+function setMensajero(){ }
+function getMensajero(){
+  return document.getElementById('sel-mensajero').value.trim();
+}
+
+// ── Tiempos ────────────────────────────────────────────────────────────────
+function registrarTiempo(tipo){
+  tiempos[tipo] = new Date();
+  const hora = ahora();
+  const chips = {salida:'chip-salida',llegada:'chip-llegada',entrega:'chip-entrega'};
+  const chip = document.getElementById(chips[tipo]);
+  chip.textContent = '✅ '+hora; chip.classList.add('set');
+  if(tipo==='salida'){
+    document.getElementById('btn-salida').disabled=true;
+    document.getElementById('btn-llegada').disabled=false;
+    toast('⏰ Salida registrada: '+hora);
+  } else if(tipo==='llegada'){
+    document.getElementById('btn-llegada').disabled=true;
+    document.getElementById('btn-entrega').disabled=false;
+    const mins = Math.round((tiempos.llegada-tiempos.salida)/60000);
+    toast('📍 Llegada registrada — '+mins+' min de trayecto');
+  } else {
+    document.getElementById('btn-entrega').disabled=true;
+    const mins = Math.round((tiempos.entrega-tiempos.salida)/60000);
+    toast('🏁 Entrega completada — '+mins+' min totales');
+  }
+}
+
+// ── Estado entrega ─────────────────────────────────────────────────────────
+function setEstado(estado){
+  estadoActual=estado;
+  document.getElementById('estado-sel').innerHTML =
+    estado==='Entregado'
+      ? '<span class="badge badge-verde">✅ Entregado</span>'
+      : '<span class="badge badge-rojo">❌ No entregado</span>';
+  document.getElementById('motivo-cont').style.display = estado==='No entregado' ? 'block' : 'none';
+}
+
+// ══════════════════════════════════════════════════════════
+// FOTOS — captura y previsualización
+// ══════════════════════════════════════════════════════════
+function agregarFotos(tipo, input){
+  const archivos = Array.from(input.files);
+  if(!archivos.length) return;
+
+  const disponibles = MAX_FOTOS - fotosData[tipo].length;
+  if(disponibles <= 0){ toast(`⚠️ Máximo ${MAX_FOTOS} fotos por sección`); return; }
+
+  const aAgregar = archivos.slice(0, disponibles);
+  let leidos = 0;
+
+  aAgregar.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      fotosData[tipo].push({ base64: e.target.result, nombre: file.name });
+      leidos++;
+      if(leidos === aAgregar.length){
+        renderPreviews(tipo);
+        toast(`📸 ${aAgregar.length} foto(s) agregada(s)`);
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = ''; // reset para poder agregar más
+}
+
+function renderPreviews(tipo){
+  const cont  = document.getElementById(`previews-${tipo}`);
+  const zona  = document.getElementById(`zona-${tipo}`);
+  const badge = document.getElementById(`badge-fotos-${tipo === 'factura' ? 'fac' : 'ent'}`);
+  const fotos = fotosData[tipo];
+
+  badge.textContent = fotos.length;
+  badge.style.display = fotos.length > 0 ? 'inline-block' : 'none';
+
+  if(!fotos.length){
+    cont.innerHTML='';
+    zona.classList.remove('con-foto');
+    zona.querySelector('.foto-label').textContent =
+      tipo==='factura' ? 'Toca para fotografiar la factura' : 'Toca para fotografiar la entrega';
+    return;
+  }
+
+  zona.classList.add('con-foto');
+  zona.querySelector('.foto-label').textContent =
+    fotos.length < MAX_FOTOS ? `Agregar más (${fotos.length}/${MAX_FOTOS})` : `Máximo ${MAX_FOTOS} fotos ✅`;
+
+  cont.innerHTML = fotos.map((f,i) => `
+    <div class="foto-thumb-wrap">
+      <img src="${f.base64}" class="foto-thumb ok" alt="Foto ${i+1}">
+      <button class="foto-thumb-del" onclick="eliminarFoto('${tipo}',${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function eliminarFoto(tipo, idx){
+  fotosData[tipo].splice(idx,1);
+  renderPreviews(tipo);
+  toast('🗑 Foto eliminada');
+}
+
+// ── Firma ──────────────────────────────────────────────────────────────────
+function setupFirma(){
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();firmando=true;const t=e.touches[0];const r=canvas.getBoundingClientRect();ultimoPunto={x:t.clientX-r.left,y:t.clientY-r.top};},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!firmando)return;const t=e.touches[0];const r=canvas.getBoundingClientRect();dibujar(t.clientX-r.left,t.clientY-r.top);},{passive:false});
+  canvas.addEventListener('touchend',()=>{firmando=false;ultimoPunto=null;});
+  canvas.addEventListener('mousedown',e=>{firmando=true;const r=canvas.getBoundingClientRect();ultimoPunto={x:e.clientX-r.left,y:e.clientY-r.top};});
+  canvas.addEventListener('mousemove',e=>{if(!firmando)return;const r=canvas.getBoundingClientRect();dibujar(e.clientX-r.left,e.clientY-r.top);});
+  canvas.addEventListener('mouseup',()=>{firmando=false;ultimoPunto=null;});
+  canvas.addEventListener('mouseleave',()=>{firmando=false;ultimoPunto=null;});
+}
+function dibujar(x,y){
+  if(!ultimoPunto){ultimoPunto={x,y};return;}
+  ctx.beginPath();ctx.moveTo(ultimoPunto.x,ultimoPunto.y);ctx.lineTo(x,y);
+  ctx.strokeStyle='#1F497D';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke();
+  ultimoPunto={x,y};
+}
+function limpiarFirma(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  firmaConfirmada=false;canvas.classList.remove('firmado');
+  document.getElementById('firma-status').textContent='';
+}
+function confirmarFirma(){
+  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  if(!data.some(v=>v!==0)){toast('⚠️ Dibuja la firma primero');return;}
+  firmaConfirmada=true;canvas.classList.add('firmado');
+  document.getElementById('firma-status').textContent='✅ Firma confirmada';
+  toast('✅ Firma del cliente confirmada');
+}
+
+// ── Guardar entrega ────────────────────────────────────────────────────────
+function guardarEntrega(){
+  const mensajero = getMensajero();
+  const numPedido = document.getElementById('num-pedido').value.trim();
+  const cliente   = document.getElementById('nombre-cliente').value.trim();
+  const direccion = document.getElementById('direccion').value.trim();
+  const ciudad    = document.getElementById('ciudad').value.trim();
+  const obs       = document.getElementById('observaciones').value.trim();
+  const motivo    = document.getElementById('motivo').value;
+
+  if(!mensajero) {toast('⚠️ Selecciona tu nombre');return;}
+  if(!numPedido) {toast('⚠️ Ingresa el número de pedido');return;}
+  if(!cliente)   {toast('⚠️ Ingresa el nombre del cliente');return;}
+  if(!tiempos.salida)  {toast('⚠️ Registra la hora de salida');return;}
+  if(!tiempos.llegada) {toast('⚠️ Registra la hora de llegada');return;}
+  if(!estadoActual)    {toast('⚠️ Selecciona el estado de la entrega');return;}
+  if(!tiempos.entrega) {toast('⚠️ Registra la hora de finalización');return;}
+  if(estadoActual==='No entregado'&&!motivo){toast('⚠️ Selecciona el motivo');return;}
+
+  const minsTrayecto = Math.round((tiempos.llegada-tiempos.salida)/60000);
+  const minsTotales  = Math.round((tiempos.entrega -tiempos.salida)/60000);
+
+  const reg = {
+    id: Date.now(),
+    fecha: new Date().toLocaleDateString('es-CO'),
+    mensajero, numPedido, cliente, direccion, ciudad,
+    estado: estadoActual, motivo: motivo||'',
+    horaSalida:  tiempos.salida.toLocaleTimeString ('es-CO',{hour:'2-digit',minute:'2-digit'}),
+    horaLlegada: tiempos.llegada.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),
+    horaEntrega: tiempos.entrega.toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}),
+    minsTrayecto, minsTotales,
+    firmaConfirmada,
+    firma64: firmaConfirmada ? canvas.toDataURL('image/png') : null,
+    fotosFactura: fotosData.factura.map(f=>f.base64),   // array de base64
+    fotosEntrega: fotosData.entrega.map(f=>f.base64),
+    totalFotos:   fotosData.factura.length + fotosData.entrega.length,
+    obs,
+  };
+
+  entregas.push(reg);
+  localStorage.setItem('entregas_antlub_v2', JSON.stringify(entregas));
+
+  // Enviar al Apps Script (Google Sheets + correo)
+  const payload = {
+    tipo: 'entrega',
+    ...reg,
+    fotosBase64: [...(reg.fotosFactura||[]), ...(reg.fotosEntrega||[])],
+    fotosFactura: (reg.fotosFactura||[]).length,
+    fotosEntrega: (reg.fotosEntrega||[]).length,
+  };
+  delete payload.firma64; // no enviar firma en base64 al script
+
+  toast('⏳ Guardando y enviando datos...');
+  enviarAlScript(payload).then(r => {
+    if(r.local) {
+      toast('✅ Guardado localmente (configura Apps Script para enviar a Sheets)');
+    } else {
+      toast('✅ ¡Registrado! Dato enviado a Sheets y correo 📊');
+    }
+  });
+  limpiarFormulario();
+  actualizarDashboard();
+}
+
+// ── Limpiar formulario ─────────────────────────────────────────────────────
+function limpiarFormulario(){
+  ['num-pedido','nombre-cliente','direccion','ciudad','observaciones'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('motivo').value='';
+  document.getElementById('motivo-cont').style.display='none';
+  document.getElementById('estado-sel').innerHTML='';
+  estadoActual=''; firmaConfirmada=false;
+  tiempos={salida:null,llegada:null,entrega:null};
+  fotosData={factura:[],entrega:[]};
+  ['salida','llegada','entrega'].forEach(t=>{
+    document.getElementById('chip-'+t).textContent='⏰ Sin registrar';
+    document.getElementById('chip-'+t).classList.remove('set');
+  });
+  document.getElementById('btn-salida').disabled=false;
+  document.getElementById('btn-llegada').disabled=true;
+  document.getElementById('btn-entrega').disabled=true;
+  limpiarFirma();
+  renderPreviews('factura');
+  renderPreviews('entrega');
+}
+
+// ── Mis entregas ───────────────────────────────────────────────────────────
+function renderMisEntregas(){
+  const filtro = document.getElementById('filtro-mensajero').value;
+  const hoyStr = new Date().toLocaleDateString('es-CO');
+  let lista = entregas.filter(e=>e.fecha===hoyStr);
+  if(filtro) lista=lista.filter(e=>e.mensajero&&e.mensajero.toLowerCase().includes(filtro.toLowerCase()));
+  lista=lista.slice().reverse();
+  const cont=document.getElementById('lista-entregas');
+  if(!lista.length){cont.innerHTML='<div class="empty-state"><div class="icon">📭</div>No hay entregas hoy</div>';return;}
+  cont.innerHTML=lista.map(e=>`
+    <div class="registro ${e.estado==='Entregado'?'entregado':'no-entrega'}">
+      <div class="registro-header">
+        <span class="registro-titulo">📦 Pedido #${e.numPedido}</span>
+        <span class="badge ${e.estado==='Entregado'?'badge-verde':'badge-rojo'}">${e.estado}</span>
+      </div>
+      <div class="registro-detalle">
+        👤 <b>${e.mensajero}</b><br>
+        🏢 ${e.cliente}<br>
+        📍 ${e.direccion}${e.ciudad?' — '+e.ciudad:''}<br>
+        🚀 ${e.horaSalida} → 📍 ${e.horaLlegada} → 🏁 ${e.horaEntrega}<br>
+        ⏱ Trayecto: <b>${e.minsTrayecto} min</b> | Total: <b>${e.minsTotales} min</b><br>
+        📸 Fotos: <b>${e.totalFotos||0}</b>
+        ${e.firmaConfirmada?' | ✍️ <span class="badge badge-verde">Con firma</span>':''}
+        ${e.motivo?'<br>⚠️ '+e.motivo:''}
+        ${e.obs?'<br>📝 '+e.obs:''}
+      </div>
+      ${e.fotosFactura&&e.fotosFactura.length?`
+        <div style="margin-top:8px;">
+          <div class="small" style="margin-bottom:4px;">🧾 Facturas:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${e.fotosFactura.map((f,i)=>`<img src="${f}" style="height:60px;border-radius:6px;border:1px solid #DDD;cursor:pointer;" onclick="verFoto('${f}')" alt="F${i+1}">`).join('')}
+          </div>
+        </div>`:''
+      }
+      ${e.fotosEntrega&&e.fotosEntrega.length?`
+        <div style="margin-top:6px;">
+          <div class="small" style="margin-bottom:4px;">📦 Evidencia entrega:</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            ${e.fotosEntrega.map((f,i)=>`<img src="${f}" style="height:60px;border-radius:6px;border:1px solid #DDD;cursor:pointer;" onclick="verFoto('${f}')" alt="E${i+1}">`).join('')}
+          </div>
+        </div>`:''
+      }
+    </div>
+  `).join('');
+}
+
+function verFoto(src){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+  overlay.innerHTML=`<img src="${src}" style="max-width:95vw;max-height:95vh;border-radius:8px;">`;
+  overlay.onclick=()=>overlay.remove();
+  document.body.appendChild(overlay);
+}
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+function actualizarDashboard(){
+  const hoyStr=new Date().toLocaleDateString('es-CO');
+  const h=entregas.filter(e=>e.fecha===hoyStr);
+  const ent=h.filter(e=>e.estado==='Entregado');
+  const noEnt=h.filter(e=>e.estado==='No entregado');
+  const ef=h.length?Math.round(ent.length/h.length*100):0;
+  const totalFotos=h.reduce((a,e)=>a+(e.totalFotos||0),0);
+  document.getElementById('kpi-total').textContent=h.length;
+  document.getElementById('kpi-entregados').textContent=ent.length;
+  document.getElementById('kpi-no-entregados').textContent=noEnt.length;
+  document.getElementById('kpi-efectividad').textContent=ef+'%';
+  document.getElementById('kpi-fotos').textContent=totalFotos;
+  if(ent.length){
+    const tp=ent.map(e=>e.minsTotales);
+    const prom=Math.round(tp.reduce((a,b)=>a+b,0)/tp.length);
+    document.getElementById('kpi-tiempo-prom').textContent=prom+' min';
+  }
+  if(noEnt.length){
+    document.getElementById('card-motivos').style.display='block';
+    const mot={};noEnt.forEach(e=>{mot[e.motivo||'Sin especificar']=(mot[e.motivo||'Sin especificar']||0)+1;});
+    document.getElementById('lista-motivos').innerHTML=Object.entries(mot).sort((a,b)=>b[1]-a[1]).map(([m,n])=>`
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:13px;">
+        <span>${m}</span><span class="badge badge-rojo">${n}</span>
+      </div>`).join('');
+  }
+}
+
+// ── Ranking ────────────────────────────────────────────────────────────────
+function renderRanking(){
+  const hoyStr=new Date().toLocaleDateString('es-CO');
+  const h=entregas.filter(e=>e.fecha===hoyStr);
+  if(!h.length) return;
+  const pm={};
+  h.forEach(e=>{
+    if(!pm[e.mensajero]) pm[e.mensajero]={total:0,entregados:0,tiempos:[],fotos:0};
+    pm[e.mensajero].total++;
+    if(e.estado==='Entregado'){pm[e.mensajero].entregados++;pm[e.mensajero].tiempos.push(e.minsTotales);}
+    pm[e.mensajero].fotos+=(e.totalFotos||0);
+  });
+  const ranking=Object.entries(pm).map(([n,d])=>({
+    nombre:n, total:d.total, entregados:d.entregados, fotos:d.fotos,
+    efectividad:Math.round(d.entregados/d.total*100),
+    tiempoProm:d.tiempos.length?Math.round(d.tiempos.reduce((a,b)=>a+b,0)/d.tiempos.length):999,
+  })).sort((a,b)=>{
+    if(b.efectividad!==a.efectividad) return b.efectividad-a.efectividad;
+    return a.tiempoProm-b.tiempoProm;
+  });
+  const cls=['rank-1','rank-2','rank-3'];
+  document.getElementById('lista-ranking').innerHTML=ranking.map((r,i)=>`
+    <div class="rank-item">
+      <div class="rank-pos ${cls[i]||'rank-n'}">${i+1}</div>
+      <div class="rank-info">
+        <div class="rank-nombre">${r.nombre}</div>
+        <div class="rank-stats">
+          ${r.entregados}/${r.total} entregas •
+          <span class="badge ${r.efectividad>=90?'badge-verde':r.efectividad>=70?'badge-naranja':'badge-rojo'}">${r.efectividad}%</span>
+          • 📸 ${r.fotos} fotos
+        </div>
+      </div>
+      <div class="rank-tiempo">${r.tiempoProm<999?r.tiempoProm+' min':'—'}</div>
+    </div>`).join('');
+}
+
+// ── Exportar CSV ───────────────────────────────────────────────────────────
+function exportarCSV(){
+  if(!entregas.length){toast('⚠️ No hay datos');return;}
+  const h=['Fecha','Mensajero','Pedido','Cliente','Dirección','Ciudad','Estado','Motivo',
+           'Hora Salida','Hora Llegada','Hora Entrega','Mins Trayecto','Mins Totales',
+           'Firma Confirmada','Fotos Factura','Fotos Entrega','Total Fotos','Observaciones'];
+  const rows=entregas.map(e=>[
+    e.fecha,e.mensajero,e.numPedido,e.cliente,e.direccion,e.ciudad,
+    e.estado,e.motivo,e.horaSalida,e.horaLlegada,e.horaEntrega,
+    e.minsTrayecto,e.minsTotales,
+    e.firmaConfirmada?'Sí':'No',
+    (e.fotosFactura||[]).length,(e.fotosEntrega||[]).length,e.totalFotos||0,
+    e.obs
+  ].map(v=>`"${String(v||'').replace(/"/g,'""')}"`));
+  const csv='\uFEFF'+[h,...rows].map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Entregas_Antlub_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();URL.revokeObjectURL(url);
+  toast('📥 CSV exportado');
+}
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>

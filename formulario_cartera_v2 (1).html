@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Antioqueña de Lubricantes — Cartera</title>
+<style>
+  :root {
+    --azul:    #1F497D;
+    --azul2:   #2C3E50;
+    --verde:   #1E8449;
+    --naranja: #E67E22;
+    --rojo:    #C0392B;
+    --gris:    #F4F6F8;
+    --morado:  #7D3C98;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+  body { background: var(--gris); min-height: 100vh; }
+
+  .header {
+    background: var(--morado);
+    color: white; padding: 14px 16px 10px;
+    text-align: center; position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .header h1 { font-size: 16px; font-weight: bold; }
+  .header p  { font-size: 11px; opacity: .85; margin-top: 2px; }
+
+  .tabs { display: flex; background: var(--azul2); overflow-x: auto; scrollbar-width: none; }
+  .tab { flex: 1; min-width: 80px; padding: 10px 6px; text-align: center; color: rgba(255,255,255,.65); font-size: 12px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all .2s; }
+  .tab.active { color: white; border-bottom-color: #AF7AC5; }
+
+  .section { display: none; padding: 14px 12px; max-width: 500px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.08); padding: 16px; margin-bottom: 14px; }
+  .card-title { font-size: 13px; font-weight: bold; color: var(--morado); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid var(--gris); display: flex; align-items: center; gap: 6px; }
+
+  label { font-size: 12px; color: #555; font-weight: bold; display: block; margin-bottom: 4px; }
+  input, select, textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #DDD; border-radius: 8px; font-size: 14px; color: #222; background: var(--gris); margin-bottom: 12px; transition: border-color .2s; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--morado); background: white; }
+  textarea { resize: none; height: 60px; }
+
+  .btn { width: 100%; padding: 13px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: transform .1s; margin-bottom: 8px; }
+  .btn:active { transform: scale(.97); }
+  .btn-morado  { background: var(--morado); color: white; }
+  .btn-verde   { background: var(--verde);  color: white; }
+  .btn-naranja { background: var(--naranja);color: white; }
+  .btn-gris    { background: #95A5A6;       color: white; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+  .badge-verde  { background: #D5F0E3; color: var(--verde); }
+  .badge-rojo   { background: #FEECEC; color: var(--rojo); }
+  .badge-morado { background: #E8DAEF; color: var(--morado); }
+  .badge-naranja{ background: #FDF3E2; color: var(--naranja); }
+
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .kpi-card { background: white; border-radius: 10px; padding: 14px 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,.07); }
+  .kpi-valor { font-size: 22px; font-weight: bold; color: var(--morado); }
+  .kpi-label { font-size: 11px; color: #888; margin-top: 2px; }
+
+  .registro { background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); border-left: 4px solid var(--morado); }
+  .registro-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .registro-titulo { font-weight: bold; font-size: 13px; color: var(--azul2); }
+  .registro-detalle { font-size: 12px; color: #666; line-height: 1.7; }
+
+
+  /* ── FOTO ── */
+  .foto-zona{border:2px dashed #CCC;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px;cursor:pointer;transition:all .2s;background:var(--gris);}
+  .foto-zona:hover{border-color:var(--morado);background:#F5EEF8;}
+  .foto-zona.con-foto{border-color:var(--verde);border-style:solid;background:#F0FFF4;}
+  .foto-icon{font-size:28px;margin-bottom:4px;}
+  .foto-label{font-size:13px;color:#666;font-weight:bold;}
+  .foto-sub{font-size:11px;color:#AAA;margin-top:2px;}
+  .fotos-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+  .foto-thumb-wrap{position:relative;}
+  .foto-thumb{width:100%;height:90px;object-fit:cover;border-radius:8px;border:2px solid var(--verde);}
+  .foto-thumb-del{position:absolute;top:4px;right:4px;background:rgba(192,57,43,.85);color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;}
+  .foto-count-badge{background:var(--verde);color:white;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:bold;}
+  input[type=file]{display:none;}
+
+  .monto-input { position: relative; }
+  .monto-input::before { content: '$'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #555; font-weight: bold; pointer-events: none; }
+  .monto-input input { padding-left: 24px; }
+
+  .empty-state { text-align: center; padding: 30px 20px; color: #AAA; font-size: 13px; }
+  .empty-state .icon { font-size: 36px; margin-bottom: 8px; }
+
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--azul2); color: white; padding: 10px 20px; border-radius: 20px; font-size: 13px; font-weight: bold; opacity: 0; transition: opacity .3s; z-index: 999; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+
+  .separator { height: 1px; background: var(--gris); margin: 10px 0; }
+  .small { font-size: 11px; color: #888; }
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; }
+
+  /* Resumen por vendedor */
+  .vendedor-card { background: white; border-radius: 8px; padding: 12px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+  .vendedor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .vendedor-nombre { font-weight: bold; font-size: 13px; color: var(--azul); }
+  .progress-bar { height: 8px; background: #EEE; border-radius: 4px; margin: 4px 0 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: var(--verde); transition: width .5s; }
+  .vendedor-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .vstat { text-align: center; font-size: 11px; }
+  .vstat-val { font-weight: bold; font-size: 13px; color: var(--morado); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>💰 Gestión de Cartera</h1>
+  <p>Antioqueña de Lubricantes — Registro de pagos y abonos</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('registrar')">📝 Registrar</div>
+  <div class="tab" onclick="showTab('historial')">📋 Historial</div>
+  <div class="tab" onclick="showTab('resumen')">📊 Resumen</div>
+</div>
+
+<!-- ══════ TAB: REGISTRAR ══════ -->
+<div id="tab-registrar" class="section active">
+
+  <div class="card">
+    <div class="card-title">👤 Vendedor</div>
+    <label>Nombre del vendedor</label>
+    <input type="text" id="sel-vendedor" placeholder="Escribe tu nombre completo" autocomplete="name">
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏢 Datos del cliente</div>
+    <label>NIT del cliente</label>
+    <input type="text" id="nit-cliente" placeholder="Ej: 800123456" inputmode="numeric">
+    <label>Nombre del cliente</label>
+    <input type="text" id="nombre-cliente" placeholder="Razón social completa">
+  </div>
+
+  <div class="card">
+    <div class="card-title">📄 Datos de la factura</div>
+    <label>Número de factura</label>
+    <input type="text" id="num-factura" placeholder="Ej: 29458" inputmode="numeric">
+    <label>Fecha de la factura</label>
+    <input type="date" id="fecha-factura">
+    <label>Valor total de la factura ($)</label>
+    <div class="monto-input">
+      <input type="number" id="valor-factura" placeholder="0" inputmode="numeric" min="0">
+    </div>
+    <label>Días de vencimiento (plazo)</label>
+    <select id="dias-vencimiento">
+      <option value="0">Contado (0 días)</option>
+      <option value="15">15 días</option>
+      <option value="30">30 días</option>
+      <option value="45">45 días</option>
+      <option value="60">60 días</option>
+      <option value="90">90 días</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <div class="card-title">💵 Pago / Abono</div>
+    <label>Tipo de movimiento</label>
+    <select id="tipo-movimiento" onchange="onTipoChange()">
+      <option value="">— Selecciona tipo —</option>
+      <option value="Pago total">✅ Pago total (cancela la factura)</option>
+      <option value="Abono parcial">💲 Abono parcial</option>
+      <option value="Descuento">🏷 Descuento acordado</option>
+      <option value="Nota crédito">📋 Nota crédito</option>
+      <option value="Devolución">↩️ Devolución de mercancía</option>
+    </select>
+
+    <label>Valor del pago / abono / descuento ($)</label>
+    <div class="monto-input">
+      <input type="number" id="valor-pago" placeholder="0" inputmode="numeric" min="0">
+    </div>
+
+    <label>Fecha del pago / abono</label>
+    <input type="date" id="fecha-pago">
+
+    <label>Forma de pago</label>
+    <select id="forma-pago">
+      <option value="">— Forma de pago —</option>
+      <option>Efectivo</option>
+      <option>Transferencia bancaria</option>
+      <option>Cheque</option>
+      <option>Consignación</option>
+      <option>Débito automático</option>
+      <option>Crédito bancario</option>
+    </select>
+
+    <div id="saldo-container" style="display:none;background:#E8F5E9;border-radius:8px;padding:12px;margin-bottom:12px;">
+      <div style="font-size:12px;color:#555;margin-bottom:4px;">Saldo pendiente estimado:</div>
+      <div id="saldo-pendiente" style="font-size:22px;font-weight:bold;color:var(--verde);">$0</div>
+    </div>
+  </div>
+
+
+  <!-- ══ FOTO RECIBO / FACTURA ══ -->
+  <div class="card">
+    <div class="card-title">
+      📸 Foto del recibo / factura
+      <span id="badge-fotos-cart" class="foto-count-badge" style="display:none">0</span>
+    </div>
+    <p class="small" style="margin-bottom:10px;">
+      Adjunta foto del recibo de pago, consignación o factura. Hasta 3 fotos como evidencia del movimiento.
+    </p>
+    <div id="previews-cart" class="fotos-grid"></div>
+    <div class="foto-zona" id="zona-cart" onclick="document.getElementById('inp-cart').click()">
+      <div class="foto-icon">🧾</div>
+      <div class="foto-label">Toca para fotografiar el recibo</div>
+      <div class="foto-sub">Cámara o galería • JPG/PNG • máx 3 fotos</div>
+    </div>
+    <input type="file" id="inp-cart" accept="image/*" capture="environment" multiple onchange="agregarFotosCart(this)">
+  </div>
+
+  <div class="card">
+    <div class="card-title">📝 Observaciones</div>
+    <label>Compromiso de pago / notas</label>
+    <textarea id="obs-cartera" placeholder="Ej: Cliente promete pagar el saldo el viernes 11 de abril. Se acordó descuento del 5% por pronto pago."></textarea>
+    <label>¿Cliente bloqueado por cupo?</label>
+    <select id="bloqueado">
+      <option value="No">No</option>
+      <option value="Sí">Sí — no puede hacer nuevos pedidos</option>
+      <option value="Parcial">Parcial — cupo reducido</option>
+    </select>
+  </div>
+
+  <button class="btn btn-morado" onclick="guardarCartera()" style="font-size:16px;padding:15px;">
+    💾 Guardar registro de cartera
+  </button>
+  <button class="btn btn-gris" onclick="limpiarCartera()">🔄 Limpiar formulario</button>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ══════ TAB: HISTORIAL ══════ -->
+<div id="tab-historial" class="section">
+  <div class="card">
+    <div class="card-title">🔍 Filtrar</div>
+    <input type="text" id="filtro-vendedor-hist" placeholder="Filtrar por nombre de vendedor..." oninput="renderHistorial()">
+    <select id="filtro-tipo-hist" onchange="renderHistorial()">
+      <option value="">— Todos los tipos —</option>
+      <option>Pago total</option>
+      <option>Abono parcial</option>
+      <option>Descuento</option>
+      <option>Nota crédito</option>
+      <option>Devolución</option>
+    </select>
+  </div>
+  <div id="lista-cartera">
+    <div class="empty-state"><div class="icon">📭</div>No hay registros aún</div>
+  </div>
+  <button class="btn btn-naranja mt-8" onclick="exportarCartaCSV()">📥 Exportar a Excel (CSV)</button>
+  <div style="height:20px;"></div>
+</div>
+
+<!-- ══════ TAB: RESUMEN ══════ -->
+<div id="tab-resumen" class="section">
+  <div class="card">
+    <div class="card-title">📊 Indicadores generales de cartera</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-valor" id="kpi-total-fac">0</div>
+        <div class="kpi-label">Facturas registradas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-valor" style="color:var(--verde)" id="kpi-total-pagado">$0</div>
+        <div class="kpi-label">Total recaudado</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-valor" style="color:var(--rojo)" id="kpi-total-pendiente">$0</div>
+        <div class="kpi-label">Saldo pendiente</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-valor" style="color:var(--naranja)" id="kpi-efectividad-cart">0%</div>
+        <div class="kpi-label">Efectividad recaudo</div>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-valor" style="color:var(--rojo);font-size:18px;" id="kpi-bloqueados">0</div>
+        <div class="kpi-label">Clientes bloqueados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-valor" style="color:var(--morado);font-size:18px;" id="kpi-abonos">0</div>
+        <div class="kpi-label">Abonos parciales</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 Efectividad por vendedor</div>
+    <div id="resumen-vendedores">
+      <div class="empty-state"><div class="icon">👥</div>Sin datos aún</div>
+    </div>
+  </div>
+
+  <button class="btn btn-morado" onclick="actualizarResumen()">🔄 Actualizar</button>
+  <div style="height:20px;"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ══ FOTOS CARTERA ══
+let fotosCart = [];
+const MAX_FOTOS_CART = 3;
+
+function agregarFotosCart(input){
+  const archivos = Array.from(input.files);
+  if(!archivos.length) return;
+  const disponibles = MAX_FOTOS_CART - fotosCart.length;
+  if(disponibles <= 0){ toast('⚠️ Máximo 3 fotos'); return; }
+  const aAgregar = archivos.slice(0, disponibles);
+  let leidos = 0;
+  aAgregar.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      fotosCart.push(e.target.result);
+      leidos++;
+      if(leidos === aAgregar.length){ renderFotosCart(); toast('📸 ' + aAgregar.length + ' foto(s) agregada(s)'); }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value = '';
+}
+
+function renderFotosCart(){
+  const cont  = document.getElementById('previews-cart');
+  const zona  = document.getElementById('zona-cart');
+  const badge = document.getElementById('badge-fotos-cart');
+  badge.textContent = fotosCart.length;
+  badge.style.display = fotosCart.length > 0 ? 'inline-block' : 'none';
+  if(!fotosCart.length){
+    cont.innerHTML='';
+    zona.classList.remove('con-foto');
+    zona.querySelector('.foto-label').textContent='Toca para fotografiar el recibo';
+    return;
+  }
+  zona.classList.add('con-foto');
+  zona.querySelector('.foto-label').textContent = fotosCart.length < MAX_FOTOS_CART ? 
+    `Agregar más (${fotosCart.length}/${MAX_FOTOS_CART})` : `${MAX_FOTOS_CART} fotos ✅`;
+  cont.innerHTML = fotosCart.map((f,i)=>`
+    <div class="foto-thumb-wrap">
+      <img src="${f}" class="foto-thumb" alt="Foto ${i+1}">
+      <button class="foto-thumb-del" onclick="elimFotoCart(${i})">✕</button>
+    </div>`).join('');
+}
+
+function elimFotoCart(idx){ fotosCart.splice(idx,1); renderFotosCart(); toast('🗑 Foto eliminada'); }
+
+function verFotoCart(src){
+  const ov=document.createElement('div');
+  ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;';
+  ov.innerHTML=`<img src="${src}" style="max-width:95vw;max-height:95vh;border-radius:8px;">`;
+  ov.onclick=()=>ov.remove(); document.body.appendChild(ov);
+}
+
+
+// ══ CONFIGURACIÓN APPS SCRIPT ══
+const APPS_SCRIPT_URL = 'PEGA_AQUI_LA_URL_DEL_SCRIPT';
+
+async function enviarAlScript(datos) {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PEGA_AQUI')) {
+    return { ok: true, local: true };
+  }
+  try {
+    await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(datos),
+      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors'
+    });
+    return { ok: true };
+  } catch(e) {
+    return { ok: false };
+  }
+}
+
+let carteras = JSON.parse(localStorage.getItem('cartera_antlub') || '[]');
+
+window.onload = () => {
+  const hoy = new Date().toISOString().slice(0,10);
+  document.getElementById('fecha-pago').value    = hoy;
+  document.getElementById('fecha-factura').value = hoy;
+  actualizarResumen();
+};
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  if (tab === 'historial') renderHistorial();
+  if (tab === 'resumen')   actualizarResumen();
+}
+
+function onTipoChange() {
+  const tipo = document.getElementById('tipo-movimiento').value;
+  const sc   = document.getElementById('saldo-container');
+  sc.style.display = tipo ? 'block' : 'none';
+  calcSaldo();
+}
+
+function calcSaldo() {
+  const factura = parseFloat(document.getElementById('valor-factura').value) || 0;
+  const pago    = parseFloat(document.getElementById('valor-pago').value)    || 0;
+  const saldo   = Math.max(0, factura - pago);
+  document.getElementById('saldo-pendiente').textContent = '$' + saldo.toLocaleString('es-CO');
+}
+
+document.addEventListener('input', e => {
+  if (['valor-factura','valor-pago'].includes(e.target.id)) calcSaldo();
+});
+
+function guardarCartera() {
+  const vendedor  = document.getElementById('sel-vendedor').value;
+  const nit       = document.getElementById('nit-cliente').value.trim();
+  const cliente   = document.getElementById('nombre-cliente').value.trim();
+  const factura   = document.getElementById('num-factura').value.trim();
+  const fecFac    = document.getElementById('fecha-factura').value;
+  const valFac    = parseFloat(document.getElementById('valor-factura').value) || 0;
+  const diasVenc  = parseInt(document.getElementById('dias-vencimiento').value);
+  const tipo      = document.getElementById('tipo-movimiento').value;
+  const valPago   = parseFloat(document.getElementById('valor-pago').value) || 0;
+  const fecPago   = document.getElementById('fecha-pago').value;
+  const forma     = document.getElementById('forma-pago').value;
+  const obs       = document.getElementById('obs-cartera').value.trim();
+  const bloq      = document.getElementById('bloqueado').value;
+
+  if (!vendedor) { toast('⚠️ Selecciona el vendedor'); return; }
+  if (!nit)      { toast('⚠️ Ingresa el NIT del cliente'); return; }
+  if (!cliente)  { toast('⚠️ Ingresa el nombre del cliente'); return; }
+  if (!factura)  { toast('⚠️ Ingresa el número de factura'); return; }
+  if (!tipo)     { toast('⚠️ Selecciona el tipo de movimiento'); return; }
+  if (!fecPago)  { toast('⚠️ Ingresa la fecha del pago'); return; }
+
+  // Calcular vencimiento y días de mora
+  let fechaVenc = null, diasMora = 0;
+  if (fecFac) {
+    const fv = new Date(fecFac);
+    fv.setDate(fv.getDate() + diasVenc);
+    fechaVenc = fv.toISOString().slice(0,10);
+    const hoy = new Date();
+    diasMora = Math.max(0, Math.round((hoy - fv) / 86400000));
+  }
+
+  const saldo = Math.max(0, valFac - valPago);
+
+  const reg = {
+    id: Date.now(),
+    fecha: new Date().toLocaleDateString('es-CO'),
+    fechaRegistro: new Date().toISOString(),
+    vendedor, nit, cliente, factura, fecFac, valFac,
+    diasVenc, fechaVenc, diasMora, tipo, valPago, fecPago,
+    forma, saldo, bloqueado: bloq, obs
+  };
+
+  carteras.push(reg);
+  localStorage.setItem('cartera_antlub', JSON.stringify(carteras));
+  toast('✅ Registro de cartera guardado');
+  limpiarCartera();
+  actualizarResumen();
+}
+
+function limpiarCartera() {
+  ['sel-vendedor','nit-cliente','nombre-cliente','num-factura','valor-factura',
+   'tipo-movimiento','valor-pago','forma-pago','obs-cartera'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('dias-vencimiento').value = '0';
+  document.getElementById('bloqueado').value = 'No';
+  fotosCart=[]; renderFotosCart();
+  document.getElementById('saldo-container').style.display = 'none';
+  const hoy = new Date().toISOString().slice(0,10);
+  document.getElementById('fecha-pago').value    = hoy;
+  document.getElementById('fecha-factura').value = hoy;
+}
+
+function renderHistorial() {
+  const fv = document.getElementById('filtro-vendedor-hist').value;
+  const ft = document.getElementById('filtro-tipo-hist').value;
+  let lista = [...carteras].reverse();
+  if (fv) lista = lista.filter(r => r.vendedor === fv);
+  if (ft) lista = lista.filter(r => r.tipo === ft);
+
+  const cont = document.getElementById('lista-cartera');
+  if (!lista.length) {
+    cont.innerHTML = '<div class="empty-state"><div class="icon">📭</div>Sin registros</div>';
+    return;
+  }
+
+  const colores = {
+    'Pago total':    'badge-verde',
+    'Abono parcial': 'badge-naranja',
+    'Descuento':     'badge-morado',
+    'Nota crédito':  'badge-morado',
+    'Devolución':    'badge-rojo',
+  };
+
+  cont.innerHTML = lista.map(r => `
+    <div class="registro">
+      <div class="registro-header">
+        <span class="registro-titulo">📄 Fac. #${r.factura}</span>
+        <span class="badge ${colores[r.tipo] || 'badge-morado'}">${r.tipo}</span>
+      </div>
+      <div class="registro-detalle">
+        🏢 <b>${r.cliente}</b> | NIT: ${r.nit}<br>
+        👤 ${r.vendedor.split(' ')[0]} ${r.vendedor.split(' ')[1] || ''}<br>
+        💵 Factura: <b>$${(r.valFac||0).toLocaleString('es-CO')}</b>
+        → Pago: <b>$${(r.valPago||0).toLocaleString('es-CO')}</b>
+        → Saldo: <b style="color:${r.saldo>0?'var(--rojo)':'var(--verde)'}">$${(r.saldo||0).toLocaleString('es-CO')}</b><br>
+        📅 Pago: ${r.fecPago} | ${r.forma || 'Sin forma'}<br>
+        ${r.diasMora > 0 ? `⚠️ <span class="badge badge-rojo">${r.diasMora} días de mora</span><br>` : ''}
+        ${r.bloqueado !== 'No' ? `🔒 <span class="badge badge-rojo">Bloqueado: ${r.bloqueado}</span><br>` : ''}
+        ${r.obs ? '📝 ' + r.obs : ''}
+        ${r.fotos&&r.fotos.length?`<div style='margin-top:6px;'><div style='font-size:11px;color:#888;margin-bottom:4px;'>📸 ${r.fotos.length} foto(s) adjunta(s):</div><div style='display:flex;gap:6px;flex-wrap:wrap;'>${r.fotos.map((f,i)=>`<img src='${f}' style='height:55px;border-radius:6px;border:1px solid #DDD;cursor:pointer;' onclick='verFotoCart("${f}")' alt='F${i+1}'>`).join('')}</div></div>`:''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function actualizarResumen() {
+  const totalFac  = carteras.length;
+  const totalPag  = carteras.reduce((a,r) => a + (r.valPago || 0), 0);
+  const totalPend = carteras.reduce((a,r) => a + (r.saldo   || 0), 0);
+  const totalFacV = carteras.reduce((a,r) => a + (r.valFac  || 0), 0);
+  const efectiv   = totalFacV > 0 ? Math.round(totalPag / totalFacV * 100) : 0;
+  const bloq      = carteras.filter(r => r.bloqueado !== 'No').length;
+  const abonos    = carteras.filter(r => r.tipo === 'Abono parcial').length;
+
+  const fmt = v => v >= 1e6 ? '$' + (v/1e6).toFixed(1) + 'M' : '$' + v.toLocaleString('es-CO');
+
+  document.getElementById('kpi-total-fac').textContent      = totalFac;
+  document.getElementById('kpi-total-pagado').textContent   = fmt(totalPag);
+  document.getElementById('kpi-total-pendiente').textContent= fmt(totalPend);
+  document.getElementById('kpi-efectividad-cart').textContent= efectiv + '%';
+  document.getElementById('kpi-bloqueados').textContent     = bloq;
+  document.getElementById('kpi-abonos').textContent         = abonos;
+
+  // Por vendedor
+  const porVend = {};
+  carteras.forEach(r => {
+    if (!porVend[r.vendedor]) porVend[r.vendedor] = { fac: 0, pag: 0, pend: 0, n: 0 };
+    porVend[r.vendedor].fac  += r.valFac  || 0;
+    porVend[r.vendedor].pag  += r.valPago || 0;
+    porVend[r.vendedor].pend += r.saldo   || 0;
+    porVend[r.vendedor].n++;
+  });
+
+  const cont = document.getElementById('resumen-vendedores');
+  if (!Object.keys(porVend).length) {
+    cont.innerHTML = '<div class="empty-state"><div class="icon">👥</div>Sin datos</div>';
+    return;
+  }
+
+  cont.innerHTML = Object.entries(porVend)
+    .sort((a,b) => b[1].pag - a[1].pag)
+    .map(([nombre, d]) => {
+      const ef = d.fac > 0 ? Math.round(d.pag / d.fac * 100) : 0;
+      const nombreCorto = nombre.split(' ').slice(0,2).join(' ');
+      return `
+        <div class="vendedor-card">
+          <div class="vendedor-header">
+            <span class="vendedor-nombre">${nombreCorto}</span>
+            <span class="badge ${ef>=80?'badge-verde':ef>=50?'badge-naranja':'badge-rojo'}">${ef}% recaudo</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${ef}%;background:${ef>=80?'var(--verde)':ef>=50?'var(--naranja)':'var(--rojo)'}"></div></div>
+          <div class="vendedor-stats">
+            <div class="vstat"><div class="vstat-val">${d.n}</div><div>facturas</div></div>
+            <div class="vstat"><div class="vstat-val" style="color:var(--verde)">${fmt(d.pag)}</div><div>recaudado</div></div>
+            <div class="vstat"><div class="vstat-val" style="color:var(--rojo)">${fmt(d.pend)}</div><div>pendiente</div></div>
+          </div>
+        </div>`;
+    }).join('');
+}
+
+function exportarCartaCSV() {
+  if (!carteras.length) { toast('⚠️ No hay datos'); return; }
+  const headers = ['Fecha','Vendedor','NIT','Cliente','Factura','Fecha Factura',
+                   'Valor Factura','Plazo días','Fecha Venc.','Días Mora','Tipo',
+                   'Valor Pago','Fecha Pago','Forma Pago','Saldo','Bloqueado','Observaciones'];
+  const rows = carteras.map(r => [
+    r.fecha, r.vendedor, r.nit, r.cliente, r.factura, r.fecFac,
+    r.valFac, r.diasVenc, r.fechaVenc, r.diasMora, r.tipo,
+    r.valPago, r.fecPago, r.forma, r.saldo, r.bloqueado, r.obs
+  ].map(v => `"${String(v||'').replace(/"/g,'""')}"`));
+  const csv = '\uFEFF' + [headers,...rows].map(r=>r.join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `Cartera_Antlub_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('📥 CSV exportado');
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
