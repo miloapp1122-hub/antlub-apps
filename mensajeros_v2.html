@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:Arial,Helvetica,sans-serif;background:#F0F4F8;min-height:100vh;font-size:16px;}
-:root{--azul:#1F497D;--verde:#1E8449;--naranja:#E67E22;--rojo:#C0392B;--morado:#7D3C98;--gris:#F0F4F8;}
+:root{--azul:#1F497D;--verde:#1E8449;--naranja:#E67E22;--rojo:#C0392B;--gris:#F0F4F8;}
 .hdr{background:var(--azul);color:#fff;padding:14px 16px;text-align:center;position:sticky;top:0;z-index:50;}
 .hdr h1{font-size:17px;font-weight:700;}
 .hdr p{font-size:12px;opacity:.8;margin-top:2px;}
@@ -26,7 +26,6 @@ textarea{resize:none;height:70px;}
 .btn-azul{background:var(--azul);color:#fff;}
 .btn-verde{background:var(--verde);color:#fff;}
 .btn-naranja{background:var(--naranja);color:#fff;}
-.btn-morado{background:var(--morado);color:#fff;}
 .btn-rojo{background:var(--rojo);color:#fff;}
 .btn-gris{background:#95A5A6;color:#fff;}
 .btn:disabled{opacity:.4;}
@@ -39,7 +38,6 @@ textarea{resize:none;height:70px;}
 .badge-verde{background:#D5F0E3;color:var(--verde);}
 .badge-rojo{background:#FEECEC;color:var(--rojo);}
 .badge-naranja{background:#FDF3E2;color:var(--naranja);}
-.badge-morado{background:#E8DAEF;color:var(--morado);}
 .foto-area{border:2px dashed #CCC;border-radius:10px;padding:20px;text-align:center;margin-bottom:12px;cursor:pointer;background:#F8F9FA;}
 .foto-area.ok{border-color:var(--verde);border-style:solid;background:#F0FFF4;}
 .foto-area p{font-size:13px;color:#888;margin-top:6px;}
@@ -51,7 +49,6 @@ textarea{resize:none;height:70px;}
 .reg{background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;border-left:4px solid var(--azul);box-shadow:0 1px 4px rgba(0,0,0,.06);}
 .reg.ent{border-left-color:var(--verde);}
 .reg.noent{border-left-color:var(--rojo);}
-.reg.cobro{border-left-color:var(--morado);}
 .reg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 .reg-titulo{font-weight:700;font-size:13px;}
 .reg-det{font-size:12px;color:#666;line-height:1.7;}
@@ -66,46 +63,25 @@ textarea{resize:none;height:70px;}
 .empty{text-align:center;padding:30px;color:#AAA;font-size:13px;}
 .sep{height:1px;background:#F0F4F8;margin:10px 0;}
 .small{font-size:11px;color:#888;}.tc{text-align:center;}.mt8{margin-top:8px;}.mb0{margin-bottom:0!important;}
-/* Facturas */
-.fact-card{border:1.5px solid #DDD;border-radius:10px;padding:12px;margin-bottom:10px;background:#F8F9FA;cursor:pointer;transition:all .2s;}
-.fact-card.sel{border-color:var(--morado);background:#F3E5F5;}
-.fact-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.fact-num{font-weight:700;font-size:14px;color:var(--azul);}
-.fact-saldo{font-size:16px;font-weight:700;color:var(--rojo);}
-.fact-det{font-size:12px;color:#555;line-height:1.8;}
-.fact-pago-input{width:100%;padding:10px;border:1.5px solid var(--morado);border-radius:8px;font-size:15px;margin-top:8px;display:none;}
-.fact-card.sel .fact-pago-input{display:block;}
-.loading{text-align:center;padding:20px;color:#888;font-size:13px;}
-.spinner{display:inline-block;width:20px;height:20px;border:3px solid #DDD;border-top-color:var(--morado);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.total-box{background:#E8F5E9;border:1px solid #7ECE9E;border-radius:8px;padding:12px;margin-bottom:12px;}
-.total-lbl{font-size:12px;color:#555;margin-bottom:4px;}
-.total-val{font-size:22px;font-weight:700;color:var(--verde);}
-.nit-row{display:flex;gap:8px;}
-.nit-row input{flex:1;margin-bottom:0;}
-.nit-row button{padding:12px 16px;background:var(--morado);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:13px;}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2C3E50;color:#fff;padding:11px 22px;border-radius:22px;font-size:13px;font-weight:700;opacity:0;transition:opacity .3s;z-index:999;white-space:nowrap;pointer-events:none;}
 #toast.show{opacity:1;}
 </style>
 </head>
 <body>
 <div class="hdr">
-  <h1>🚚 Control de Entregas y Cobros</h1>
+  <h1>🚚 Control de Entregas</h1>
   <p>Antioqueña de Lubricantes</p>
 </div>
 <div class="tabs">
-  <div class="tab on" onclick="tab('reg',this)">📦 Entrega</div>
-  <div class="tab" onclick="tab('cobro',this)">💵 Cobro</div>
-  <div class="tab" onclick="tab('mis',this)">📋 Historial</div>
+  <div class="tab on" onclick="tab('reg',this)">📦 Registrar</div>
+  <div class="tab" onclick="tab('mis',this)">📋 Mis entregas</div>
   <div class="tab" onclick="tab('dash',this)">📊 Dashboard</div>
   <div class="tab" onclick="tab('rank',this)">🏆 Ranking</div>
 </div>
-
-<!-- ===== ENTREGA ===== -->
 <div id="pg-reg" class="page on">
   <div class="card">
     <div class="card-title">👤 Mensajero</div>
-    <label>Tu nombre completo</label>
+    <label>Escribe tu nombre completo</label>
     <input type="text" id="f-mensajero" placeholder="Tu nombre completo">
   </div>
   <div class="card">
@@ -123,22 +99,22 @@ textarea{resize:none;height:70px;}
     <div class="card-title">🧾 Foto de la factura</div>
     <div class="fotos-prev" id="prev-fac"></div>
     <div class="foto-area" id="zona-fac" onclick="document.getElementById('inp-fac').click()">
-      <div class="ico">📷</div><p>Toca para tomar foto</p>
+      <div class="ico">📷</div><p>Toca para tomar foto o elegir de galería</p>
     </div>
     <input type="file" id="inp-fac" accept="image/*" multiple style="display:none" onchange="addFotos('fac',this)">
-    <button class="btn btn-gris btn-sm mb0" onclick="document.getElementById('inp-fac').click()">+ Foto factura</button>
+    <button class="btn btn-gris btn-sm mb0" onclick="document.getElementById('inp-fac').click()">+ Agregar foto factura</button>
   </div>
   <div class="card">
     <div class="card-title">⏱ Tiempos</div>
-    <label>Hora de salida</label>
+    <label>Hora de salida del despacho</label>
     <div id="chip-sal" class="chip">Sin registrar</div>
     <input type="time" id="t-sal" style="margin-bottom:8px;">
-    <button class="btn btn-azul btn-sm" onclick="registrarTiempo('sal')">✅ Confirmar salida</button>
+    <button class="btn btn-azul btn-sm" onclick="registrarTiempo('sal')">✅ Confirmar hora salida</button>
     <div class="sep"></div>
     <label>Hora de llegada al cliente</label>
     <div id="chip-lle" class="chip">Sin registrar</div>
     <input type="time" id="t-lle" style="margin-bottom:8px;">
-    <button class="btn btn-naranja btn-sm" onclick="registrarTiempo('lle')">✅ Confirmar llegada</button>
+    <button class="btn btn-naranja btn-sm" onclick="registrarTiempo('lle')">✅ Confirmar hora llegada</button>
     <div class="sep"></div>
     <label>Estado de la entrega</label>
     <div class="estado-btns">
@@ -161,20 +137,20 @@ textarea{resize:none;height:70px;}
     <label>Hora de entrega / finalización</label>
     <div id="chip-ent" class="chip">Sin registrar</div>
     <input type="time" id="t-ent" style="margin-bottom:8px;">
-    <button class="btn btn-verde btn-sm" onclick="registrarTiempo('ent')">✅ Confirmar entrega</button>
+    <button class="btn btn-verde btn-sm" onclick="registrarTiempo('ent')">✅ Confirmar hora entrega</button>
   </div>
   <div class="card">
-    <div class="card-title">📦 Foto evidencia</div>
+    <div class="card-title">📦 Foto evidencia de entrega</div>
     <div class="fotos-prev" id="prev-evi"></div>
     <div class="foto-area" id="zona-evi" onclick="document.getElementById('inp-evi').click()">
-      <div class="ico">📸</div><p>Foto del producto entregado</p>
+      <div class="ico">📸</div><p>Foto del producto entregado o puerta del local</p>
     </div>
     <input type="file" id="inp-evi" accept="image/*" multiple style="display:none" onchange="addFotos('evi',this)">
-    <button class="btn btn-gris btn-sm mb0" onclick="document.getElementById('inp-evi').click()">+ Foto evidencia</button>
+    <button class="btn btn-gris btn-sm mb0" onclick="document.getElementById('inp-evi').click()">+ Agregar foto evidencia</button>
   </div>
   <div class="card">
     <div class="card-title">✍️ Firma del cliente</div>
-    <p class="small" style="margin-bottom:8px;">Desliza el dedo para firmar</p>
+    <p class="small" style="margin-bottom:8px;">Desliza el dedo sobre el recuadro para firmar</p>
     <canvas id="canvas-firma"></canvas>
     <div style="display:flex;gap:8px;margin-top:8px;">
       <button class="btn btn-gris btn-sm" style="flex:1;margin-bottom:0" onclick="limpiarFirma()">🗑 Borrar</button>
@@ -182,627 +158,97 @@ textarea{resize:none;height:70px;}
     </div>
     <p id="firma-st" class="small tc mt8"></p>
   </div>
-
-  <!-- COBRO DENTRO DE ENTREGA -->
-  <div class="card">
-    <div class="card-title">💵 ¿Realizó cobro en esta entrega?</div>
-    <div class="estado-btns">
-      <button class="btn btn-morado" onclick="toggleCobro(true)">✅ Sí, cobré</button>
-      <button class="btn btn-gris"   onclick="toggleCobro(false)">No hubo cobro</button>
-    </div>
-    <div id="cobro-entrega" style="display:none;">
-      <label>NIT del cliente</label>
-      <div class="nit-row" style="margin-bottom:12px;">
-        <input type="text" id="ce-nit" placeholder="NIT del cliente" inputmode="numeric">
-        <button onclick="buscarFacturasEntrega()">🔍 Buscar</button>
-      </div>
-      <div id="ce-nombre" style="font-size:13px;color:var(--morado);font-weight:700;min-height:18px;margin-bottom:8px;"></div>
-      <div id="ce-facturas"></div>
-      <div id="ce-pago" style="display:none;">
-        <label>Forma de pago</label>
-        <select id="ce-forma" style="margin-bottom:8px;">
-          <option value="">— Forma de pago —</option>
-          <option>Efectivo</option>
-          <option>Transferencia bancaria</option>
-          <option>Cheque</option>
-          <option>Consignacion</option>
-          <option>Debito automatico</option>
-        </select>
-        <div class="total-box">
-          <div class="total-lbl">Total a registrar:</div>
-          <div class="total-val" id="ce-total">$0</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
     <div class="card-title">📝 Observaciones</div>
-    <textarea id="f-obs" placeholder="Notas, estado del producto..."></textarea>
+    <textarea id="f-obs" placeholder="Notas, estado del producto, condiciones especiales..."></textarea>
   </div>
-  <button class="btn btn-verde" style="font-size:16px;padding:16px;" onclick="guardarEntrega()">💾 Guardar entrega</button>
-  <button class="btn btn-gris" onclick="limpiarForm()">🔄 Limpiar</button>
+  <button class="btn btn-verde" style="font-size:16px;padding:16px;" onclick="guardarEntrega()">💾 Guardar registro de entrega</button>
+  <button class="btn btn-gris" onclick="limpiarForm()">🔄 Limpiar formulario</button>
   <div style="height:24px;"></div>
 </div>
-
-<!-- ===== COBRO PURO ===== -->
-<div id="pg-cobro" class="page">
-  <div class="card">
-    <div class="card-title">👤 Mensajero</div>
-    <input type="text" id="c-mensajero" placeholder="Tu nombre completo">
-  </div>
-  <div class="card">
-    <div class="card-title">🏢 Buscar cliente</div>
-    <label>NIT del cliente</label>
-    <div class="nit-row" style="margin-bottom:8px;">
-      <input type="text" id="c-nit" placeholder="Ej: 800123456" inputmode="numeric">
-      <button onclick="buscarFacturasCobro()">🔍 Buscar</button>
-    </div>
-    <div id="c-nombre" style="font-size:13px;color:var(--morado);font-weight:700;min-height:18px;"></div>
-  </div>
-  <div class="card" id="c-card-facturas" style="display:none;">
-    <div class="card-title">📄 Facturas pendientes — selecciona las que va a pagar</div>
-    <div id="c-lista-facturas"><div class="loading"><span class="spinner"></span>Consultando...</div></div>
-  </div>
-  <div class="card" id="c-card-pago" style="display:none;">
-    <div class="card-title">💵 Datos del cobro</div>
-    <label>Fecha del cobro</label>
-    <input type="date" id="c-fecha">
-    <label>Forma de pago</label>
-    <select id="c-forma">
-      <option value="">— Forma de pago —</option>
-      <option>Efectivo</option>
-      <option>Transferencia bancaria</option>
-      <option>Cheque</option>
-      <option>Consignacion</option>
-      <option>Debito automatico</option>
-    </select>
-    <div class="total-box">
-      <div class="total-lbl">Total a registrar:</div>
-      <div class="total-val" id="c-total">$0</div>
-    </div>
-  </div>
-  <div class="card" id="c-card-foto" style="display:none;">
-    <div class="card-title">📸 Foto del recibo</div>
-    <div class="fotos-prev" id="c-prev"></div>
-    <div class="foto-area" id="c-zona" onclick="document.getElementById('c-inp').click()">
-      <div class="ico">🧾</div><p>Toca para fotografiar el recibo</p>
-    </div>
-    <input type="file" id="c-inp" accept="image/*" multiple style="display:none" onchange="addFotosCobro(this)">
-    <button class="btn btn-gris btn-sm mb0" onclick="document.getElementById('c-inp').click()">+ Foto recibo</button>
-  </div>
-  <div class="card" id="c-card-obs" style="display:none;">
-    <div class="card-title">📝 Observaciones</div>
-    <textarea id="c-obs" placeholder="Notas del cobro..."></textarea>
-  </div>
-  <button class="btn btn-morado" id="c-btn-guardar" style="font-size:16px;padding:16px;display:none;" onclick="guardarCobro()">💾 Registrar cobro en HGI</button>
-  <button class="btn btn-gris" onclick="limpiarCobro()">🔄 Limpiar</button>
-  <div style="height:24px;"></div>
-</div>
-
-<!-- ===== HISTORIAL ===== -->
 <div id="pg-mis" class="page">
   <div class="card">
     <div class="card-title">🔍 Filtrar</div>
     <input type="text" id="f-filtro" placeholder="Buscar por mensajero..." oninput="renderMis()" style="margin-bottom:0;">
   </div>
-  <div id="lista-mis"><div class="empty">Sin registros hoy</div></div>
-  <button class="btn btn-naranja mt8" onclick="exportCSV()">📥 Exportar CSV</button>
+  <div id="lista-mis"><div class="empty">Sin entregas hoy</div></div>
+  <button class="btn btn-naranja mt8" onclick="exportCSV()">📥 Exportar a Excel (CSV)</button>
   <div style="height:24px;"></div>
 </div>
-
-<!-- ===== DASHBOARD ===== -->
 <div id="pg-dash" class="page">
   <div class="card">
     <div class="card-title">📊 Resumen del día</div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="kpi-val" id="kpi-tot">0</div><div class="kpi-lbl">Entregas</div></div>
+      <div class="kpi"><div class="kpi-val" id="kpi-tot">0</div><div class="kpi-lbl">Total entregas</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--verde)" id="kpi-ent">0</div><div class="kpi-lbl">Entregados ✅</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:var(--rojo)" id="kpi-noent">0</div><div class="kpi-lbl">No entregados</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--rojo)" id="kpi-noent">0</div><div class="kpi-lbl">No entregados ❌</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--naranja)" id="kpi-ef">0%</div><div class="kpi-lbl">Efectividad</div></div>
-      <div class="kpi"><div class="kpi-val" style="font-size:18px;" id="kpi-tp">—</div><div class="kpi-lbl">Tiempo prom.</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:var(--morado);font-size:18px;" id="kpi-cobros">$0</div><div class="kpi-lbl">Cobrado 💵</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:18px;" id="kpi-tp">—</div><div class="kpi-lbl">Tiempo promedio</div></div>
+      <div class="kpi"><div class="kpi-val" style="font-size:18px;" id="kpi-fotos">0</div><div class="kpi-lbl">Fotos 📸</div></div>
     </div>
+  </div>
+  <div class="card" id="card-motivos" style="display:none;">
+    <div class="card-title">❌ Motivos no entrega</div>
+    <div id="lista-motivos"></div>
   </div>
   <button class="btn btn-azul" onclick="actualizarDash()">🔄 Actualizar</button>
   <div style="height:24px;"></div>
 </div>
-
-<!-- ===== RANKING ===== -->
 <div id="pg-rank" class="page">
   <div class="card">
-    <div class="card-title">🏆 Ranking del día</div>
+    <div class="card-title">🏆 Ranking mensajeros del día</div>
     <div id="lista-rank"><div class="empty">Sin datos aún</div></div>
   </div>
   <div style="height:24px;"></div>
 </div>
-
 <div id="toast"></div>
-
 <script>
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzHENhRnG1a2MFrnvea24qyTCOyglv9q__nk528eTCvxIVIu261K31L0T6WQVSlVhoSg/exec';
-
-var entregas = JSON.parse(localStorage.getItem('ent_v4') || '[]');
-var cobros   = JSON.parse(localStorage.getItem('cob_v1') || '[]');
-var estadoActual = '';
-var firmaOk = false;
-var tiempos = {sal:null,lle:null,ent:null};
-var fotos = {fac:[],evi:[]};
-var fotosCobro = [];
-var facturasEntrega = [];
-var facturasCobro   = [];
-var cobroEnEntrega  = false;
-
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkIXykB5lObOHxXSQnPcjucA3QXF0shgRqZrddkM4bvEua8H__oNf31ocxR-t9hi_CRA/exec';
+var entregas = JSON.parse(localStorage.getItem('ent_v3') || '[]');
+var estadoActual = '', firmaOk = false;
+var tiempos = {sal:null, lle:null, ent:null};
+var fotos = {fac:[], evi:[]};
 var cvs = document.getElementById('canvas-firma');
 var ctx = cvs.getContext('2d');
 var dibujando = false, ultimo = null;
-
 window.onload = function() {
-  var hh = String(new Date().getHours()).padStart(2,'0');
-  var mm = String(new Date().getMinutes()).padStart(2,'0');
-  var h  = hh+':'+mm;
-  document.getElementById('t-sal').value = h;
-  document.getElementById('t-lle').value = h;
-  document.getElementById('t-ent').value = h;
-  document.getElementById('c-fecha').value = new Date().toISOString().slice(0,10);
-  cvs.width = cvs.offsetWidth; cvs.height = cvs.offsetHeight;
+  var ahora=new Date(), hh=String(ahora.getHours()).padStart(2,'0'), mm=String(ahora.getMinutes()).padStart(2,'0'), h=hh+':'+mm;
+  document.getElementById('t-sal').value=h; document.getElementById('t-lle').value=h; document.getElementById('t-ent').value=h;
+  cvs.width=cvs.offsetWidth; cvs.height=cvs.offsetHeight;
   setupFirma(); actualizarDash();
 };
-
-function tab(id,el) {
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
-  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
-  document.getElementById('pg-'+id).classList.add('on');
-  el.classList.add('on');
-  if(id==='mis')  renderMis();
-  if(id==='dash') actualizarDash();
-  if(id==='rank') renderRank();
-}
-
-function toast(msg) {
-  var t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');},3500);
-}
+function tab(id,el){document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});document.getElementById('pg-'+id).classList.add('on');el.classList.add('on');if(id==='mis')renderMis();if(id==='dash')actualizarDash();if(id==='rank')renderRank();}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
 function g(id){return document.getElementById(id);}
 function hoy(){return new Date().toLocaleDateString('es-CO');}
-function fmt(v){
-  try{v=parseFloat(v);if(isNaN(v))return '$0';if(v>=1e6)return '$'+(v/1e6).toFixed(1)+'M';return '$'+Math.round(v).toLocaleString('es-CO');}catch(e){return '$0';}
-}
-
-function registrarTiempo(tipo) {
-  var val=g('t-'+tipo).value;
-  if(!val){toast('⚠️ Selecciona la hora');return;}
-  tiempos[tipo]=val;
-  var chip=g('chip-'+tipo);
-  chip.textContent='✅ '+val; chip.classList.add('ok');
-  toast('⏰ Hora registrada: '+val);
-}
-
-function setEstado(e) {
-  estadoActual=e;
-  g('estado-sel').innerHTML=e==='Entregado'
-    ?'<span class="badge badge-verde">✅ Entregado</span>'
-    :'<span class="badge badge-rojo">❌ No entregado</span>';
-  g('motivo-blk').style.display=e==='No entregado'?'block':'none';
-}
-
-function toggleCobro(si) {
-  cobroEnEntrega=si;
-  g('cobro-entrega').style.display=si?'block':'none';
-  if(!si){facturasEntrega=[];}
-}
-
-// ── BUSCAR FACTURAS ────────────────────────────────────────────────────────
-function buscarFacturasEntrega() {
-  var nit=g('ce-nit').value.trim();
-  if(!nit){toast('⚠️ Ingresa el NIT');return;}
-  g('ce-facturas').innerHTML='<div class="loading"><span class="spinner"></span>Consultando HGI...</div>';
-  g('ce-nombre').textContent='';
-  facturasEntrega=[];
-  jsonpCartera(APPS_SCRIPT_URL+'?action=cartera&nit='+encodeURIComponent(nit), function(data){
-    if(!data.ok){g('ce-facturas').innerHTML='<div class="empty">⚠️ '+(data.error||'Error')+'</div>';return;}
-    facturasEntrega=data.facturas||[];
-    renderFacturasEntrega();
-  }, function(){g('ce-facturas').innerHTML='<div class="empty">⚠️ Error de conexion</div>';});
-}
-
-function renderFacturasEntrega() {
-  if(!facturasEntrega.length){
-    g('ce-facturas').innerHTML='<div class="empty">✅ Sin facturas pendientes</div>';
-    g('ce-pago').style.display='none';
-    return;
-  }
-  if(facturasEntrega[0].nombreTercero) g('ce-nombre').textContent='Cliente: '+facturasEntrega[0].nombreTercero;
-  g('ce-facturas').innerHTML=facturasEntrega.map(function(f,i){
-    var color=f.edad>60?'var(--rojo)':f.edad>30?'var(--naranja)':'var(--verde)';
-    return '<div class="fact-card" id="cef-'+i+'" onclick="toggleFE('+i+')">' +
-      '<div class="fact-card-head"><span class="fact-num">Factura #'+f.documento+'</span><span class="fact-saldo">'+fmt(f.saldoFinal)+'</span></div>' +
-      '<div class="fact-det">📅 '+f.fecha+' | <span style="color:'+color+';font-weight:700;">'+f.edad+' días</span></div>' +
-      '<input class="fact-pago-input" type="number" id="cefp-'+i+'" placeholder="Valor..." inputmode="numeric" min="1" max="'+f.saldoFinal+'" oninput="calcTotalEntrega()" onclick="event.stopPropagation()">' +
-      '</div>';
-  }).join('');
-  g('ce-pago').style.display='block';
-}
-
-function toggleFE(i) {
-  var card=g('cef-'+i),input=g('cefp-'+i);
-  card.classList.toggle('sel');
-  if(card.classList.contains('sel')&&!input.value) input.value=Math.round(facturasEntrega[i].saldoFinal);
-  else if(!card.classList.contains('sel')) input.value='';
-  calcTotalEntrega();
-}
-
-function calcTotalEntrega() {
-  var total=0;
-  facturasEntrega.forEach(function(f,i){
-    var c=g('cef-'+i),inp=g('cefp-'+i);
-    if(c&&c.classList.contains('sel')&&inp&&inp.value) total+=parseFloat(inp.value)||0;
-  });
-  g('ce-total').textContent=fmt(total);
-}
-
-function buscarFacturasCobro() {
-  var nit=g('c-nit').value.trim();
-  if(!nit){toast('⚠️ Ingresa el NIT');return;}
-  g('c-card-facturas').style.display='block';
-  g('c-card-pago').style.display='none';
-  g('c-card-foto').style.display='none';
-  g('c-card-obs').style.display='none';
-  g('c-btn-guardar').style.display='none';
-  g('c-lista-facturas').innerHTML='<div class="loading"><span class="spinner"></span>Consultando HGI...</div>';
-  g('c-nombre').textContent='';
-  facturasCobro=[];
-  jsonpCartera(APPS_SCRIPT_URL+'?action=cartera&nit='+encodeURIComponent(nit), function(data){
-    if(!data.ok){g('c-lista-facturas').innerHTML='<div class="empty">⚠️ '+(data.error||'Error')+'</div>';return;}
-    facturasCobro=data.facturas||[];
-    renderFacturasCobro();
-  }, function(){g('c-lista-facturas').innerHTML='<div class="empty">⚠️ Error de conexion</div>';});
-}
-
-function renderFacturasCobro() {
-  if(!facturasCobro.length){
-    g('c-lista-facturas').innerHTML='<div class="empty">✅ Sin facturas pendientes</div>';
-    return;
-  }
-  if(facturasCobro[0].nombreTercero) g('c-nombre').textContent='Cliente: '+facturasCobro[0].nombreTercero;
-  g('c-lista-facturas').innerHTML=facturasCobro.map(function(f,i){
-    var color=f.edad>60?'var(--rojo)':f.edad>30?'var(--naranja)':'var(--verde)';
-    return '<div class="fact-card" id="cf-'+i+'" onclick="toggleFC('+i+')">' +
-      '<div class="fact-card-head"><span class="fact-num">Factura #'+f.documento+'</span><span class="fact-saldo">'+fmt(f.saldoFinal)+'</span></div>' +
-      '<div class="fact-det">📅 '+f.fecha+' | Vence: '+f.fechaVencimiento+'<br><span style="color:'+color+';font-weight:700;">'+f.edad+' días vencida</span></div>' +
-      '<input class="fact-pago-input" type="number" id="cfp-'+i+'" placeholder="Valor a pagar..." inputmode="numeric" min="1" max="'+f.saldoFinal+'" oninput="calcTotalCobro()" onclick="event.stopPropagation()">' +
-      '</div>';
-  }).join('');
-  g('c-card-pago').style.display='block';
-  g('c-card-foto').style.display='block';
-  g('c-card-obs').style.display='block';
-  g('c-btn-guardar').style.display='block';
-}
-
-function toggleFC(i) {
-  var card=g('cf-'+i),input=g('cfp-'+i);
-  card.classList.toggle('sel');
-  if(card.classList.contains('sel')&&!input.value) input.value=Math.round(facturasCobro[i].saldoFinal);
-  else if(!card.classList.contains('sel')) input.value='';
-  calcTotalCobro();
-}
-
-function calcTotalCobro() {
-  var total=0;
-  facturasCobro.forEach(function(f,i){
-    var c=g('cf-'+i),inp=g('cfp-'+i);
-    if(c&&c.classList.contains('sel')&&inp&&inp.value) total+=parseFloat(inp.value)||0;
-  });
-  g('c-total').textContent=fmt(total);
-}
-
-// ── FOTOS ──────────────────────────────────────────────────────────────────
-function addFotos(tipo,input) {
-  var archivos=Array.from(input.files);
-  if(!archivos.length)return;
-  var disp=3-fotos[tipo].length;
-  if(disp<=0){toast('Máximo 3 fotos');return;}
-  archivos.slice(0,disp).forEach(function(f){
-    var r=new FileReader();
-    r.onload=function(e){fotos[tipo].push(e.target.result);renderFotos(tipo);};
-    r.readAsDataURL(f);
-  });
-  input.value='';
-}
-
-function renderFotos(tipo) {
-  var cont=g('prev-'+tipo),zona=g('zona-'+tipo),arr=fotos[tipo];
-  cont.innerHTML=arr.map(function(f,i){
-    return '<div style="position:relative;display:inline-block;">'+
-      '<img src="'+f+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--verde);">'+
-      '<button onclick="delFoto(\''+tipo+'\','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(192,57,43,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;">✕</button>'+
-      '</div>';
-  }).join('');
-  if(arr.length>0){zona.classList.add('ok');zona.querySelector('p').textContent=arr.length+'/3 fotos';}
-  else{zona.classList.remove('ok');}
-}
+function registrarTiempo(tipo){var val=g('t-'+tipo).value;if(!val){toast('⚠️ Selecciona la hora');return;}tiempos[tipo]=val;var chip=g('chip-'+tipo);chip.textContent='✅ '+val;chip.classList.add('ok');toast('⏰ Hora registrada: '+val);}
+function setEstado(e){estadoActual=e;g('estado-sel').innerHTML=e==='Entregado'?'<span class="badge badge-verde">✅ Entregado</span>':'<span class="badge badge-rojo">❌ No entregado</span>';g('motivo-blk').style.display=e==='No entregado'?'block':'none';}
+function addFotos(tipo,input){var archivos=Array.from(input.files);if(!archivos.length)return;var disp=3-fotos[tipo].length;if(disp<=0){toast('Máximo 3 fotos');return;}archivos.slice(0,disp).forEach(function(f){var r=new FileReader();r.onload=function(e){fotos[tipo].push(e.target.result);renderFotos(tipo);toast('📸 foto agregada');};r.readAsDataURL(f);});input.value='';}
+function renderFotos(tipo){var cont=g('prev-'+tipo),zona=g('zona-'+tipo),arr=fotos[tipo];cont.innerHTML=arr.map(function(f,i){return'<div style="position:relative;display:inline-block;"><img src="'+f+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--verde);"><button onclick="delFoto(\''+tipo+'\','+i+')" style="position:absolute;top:2px;right:2px;background:rgba(192,57,43,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;">✕</button></div>';}).join('');if(arr.length>0){zona.classList.add('ok');zona.querySelector('p').textContent=arr.length+'/3 fotos.';}else{zona.classList.remove('ok');}}
 function delFoto(tipo,i){fotos[tipo].splice(i,1);renderFotos(tipo);}
-
-function addFotosCobro(input) {
-  Array.from(input.files).slice(0,3-fotosCobro.length).forEach(function(f){
-    var r=new FileReader();
-    r.onload=function(e){fotosCobro.push(e.target.result);renderFotosCobro();};
-    r.readAsDataURL(f);
-  });
-  input.value='';
-}
-function renderFotosCobro() {
-  var cont=g('c-prev'),zona=g('c-zona');
-  cont.innerHTML=fotosCobro.map(function(f,i){
-    return '<div style="position:relative;display:inline-block;">'+
-      '<img src="'+f+'" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--verde);">'+
-      '<button onclick="fotosCobro.splice('+i+',1);renderFotosCobro();" style="position:absolute;top:2px;right:2px;background:rgba(192,57,43,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;">✕</button>'+
-      '</div>';
-  }).join('');
-  if(fotosCobro.length>0){zona.classList.add('ok');zona.querySelector('p').textContent=fotosCobro.length+'/3 fotos';}
-}
-
-// ── FIRMA ──────────────────────────────────────────────────────────────────
-function setupFirma() {
-  function pos(e){var r=cvs.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
-  function start(e){e.preventDefault();dibujando=true;ultimo=pos(e);}
-  function move(e){e.preventDefault();if(!dibujando)return;var p=pos(e);ctx.beginPath();ctx.moveTo(ultimo.x,ultimo.y);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1F497D';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();ultimo=p;}
-  function end(){dibujando=false;ultimo=null;}
-  cvs.addEventListener('touchstart',start,{passive:false});cvs.addEventListener('touchmove',move,{passive:false});cvs.addEventListener('touchend',end);
-  cvs.addEventListener('mousedown',start);cvs.addEventListener('mousemove',move);cvs.addEventListener('mouseup',end);cvs.addEventListener('mouseleave',end);
-}
+function setupFirma(){function pos(e){var r=cvs.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}function start(e){e.preventDefault();dibujando=true;ultimo=pos(e);}function move(e){e.preventDefault();if(!dibujando)return;var p=pos(e);ctx.beginPath();ctx.moveTo(ultimo.x,ultimo.y);ctx.lineTo(p.x,p.y);ctx.strokeStyle='#1F497D';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.stroke();ultimo=p;}function end(){dibujando=false;ultimo=null;}cvs.addEventListener('touchstart',start,{passive:false});cvs.addEventListener('touchmove',move,{passive:false});cvs.addEventListener('touchend',end);cvs.addEventListener('mousedown',start);cvs.addEventListener('mousemove',move);cvs.addEventListener('mouseup',end);cvs.addEventListener('mouseleave',end);}
 function limpiarFirma(){ctx.clearRect(0,0,cvs.width,cvs.height);firmaOk=false;cvs.classList.remove('ok');g('firma-st').textContent='';}
-function confirmarFirma(){
-  var d=ctx.getImageData(0,0,cvs.width,cvs.height).data;
-  if(!d.some(function(v){return v!==0;})){toast('⚠️ Dibuja la firma primero');return;}
-  firmaOk=true;cvs.classList.add('ok');g('firma-st').textContent='✅ Firma confirmada';toast('✅ Firma confirmada');
-}
-
-// ── GUARDAR ENTREGA ────────────────────────────────────────────────────────
-function guardarEntrega() {
-  var mens=g('f-mensajero').value.trim();
-  var pedido=g('f-pedido').value.trim();
-  var cli=g('f-cliente').value.trim();
-  if(!mens){toast('⚠️ Escribe tu nombre');return;}
-  if(!pedido){toast('⚠️ Ingresa el número de pedido');return;}
-  if(!cli){toast('⚠️ Ingresa el nombre del cliente');return;}
-  if(!tiempos.sal){toast('⚠️ Confirma la hora de salida');return;}
-  if(!tiempos.lle){toast('⚠️ Confirma la hora de llegada');return;}
-  if(!estadoActual){toast('⚠️ Selecciona el estado de la entrega');return;}
-  if(!tiempos.ent){toast('⚠️ Confirma la hora de entrega');return;}
-  if(estadoActual==='No entregado'&&!g('f-motivo').value){toast('⚠️ Selecciona el motivo');return;}
-
+function confirmarFirma(){var d=ctx.getImageData(0,0,cvs.width,cvs.height).data;if(!d.some(function(v){return v!==0;})){toast('⚠️ Dibuja la firma primero');return;}firmaOk=true;cvs.classList.add('ok');g('firma-st').textContent='✅ Firma confirmada';toast('✅ Firma confirmada');}
+function guardarEntrega(){
+  var mens=g('f-mensajero').value.trim(),pedido=g('f-pedido').value.trim(),cli=g('f-cliente').value.trim();
+  var dir=g('f-dir').value.trim(),ciudad=g('f-ciudad').value.trim(),obs=g('f-obs').value.trim(),motivo=g('f-motivo').value;
+  if(!mens){toast('⚠️ Escribe tu nombre');return;}if(!pedido){toast('⚠️ Ingresa el número de pedido');return;}if(!cli){toast('⚠️ Ingresa el nombre del cliente');return;}
+  if(!tiempos.sal){toast('⚠️ Confirma la hora de salida');return;}if(!tiempos.lle){toast('⚠️ Confirma la hora de llegada');return;}
+  if(!estadoActual){toast('⚠️ Selecciona el estado de la entrega');return;}if(!tiempos.ent){toast('⚠️ Confirma la hora de entrega');return;}
+  if(estadoActual==='No entregado'&&!motivo){toast('⚠️ Selecciona el motivo');return;}
   function toMins(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-  var reg={
-    id:Date.now(),fecha:hoy(),tipo:'entrega',
-    mensajero:mens,numPedido:pedido,cliente:cli,
-    direccion:g('f-dir').value.trim(),ciudad:g('f-ciudad').value.trim(),
-    estado:estadoActual,motivo:g('f-motivo').value,
-    horaSalida:tiempos.sal,horaLlegada:tiempos.lle,horaEntrega:tiempos.ent,
-    minsTrayecto:Math.max(0,toMins(tiempos.lle)-toMins(tiempos.sal)),
-    minsTotales:Math.max(0,toMins(tiempos.ent)-toMins(tiempos.sal)),
-    firmaConfirmada:firmaOk,
-    totalFotos:fotos.fac.length+fotos.evi.length,
-    obs:g('f-obs').value.trim(),
-  };
-
-  entregas.push(reg);
-  localStorage.setItem('ent_v4',JSON.stringify(entregas));
-  enviarDatos(Object.assign({},reg,{tipo:'entrega'}));
-
-  // Si hubo cobro, procesarlo también
-  if(cobroEnEntrega) {
-    var pagos=[];
-    facturasEntrega.forEach(function(f,i){
-      var card=g('cef-'+i),inp=g('cefp-'+i);
-      if(card&&card.classList.contains('sel')&&inp&&parseFloat(inp.value)>0){
-        pagos.push({documento:f.documento,transaccion:f.transaccion||'03',valor:parseFloat(inp.value)});
-      }
-    });
-    if(pagos.length>0&&g('ce-forma').value){
-      var pagoData={
-        tipo:'pago_hgi',
-        mensajero:mens,
-        nit:g('ce-nit').value.trim(),
-        cliente:cli,
-        pagos:pagos,
-        formaPago:g('ce-forma').value,
-        fecha:new Date().toISOString(),
-        observaciones:'Cobro en entrega pedido #'+pedido,
-      };
-      enviarPagoHGI(pagoData);
-    }
-  }
-
-  toast('⏳ Guardando...');
-  setTimeout(function(){limpiarForm();toast('✅ Entrega guardada');},500);
+  var reg={id:Date.now(),fecha:hoy(),mensajero:mens,numPedido:pedido,cliente:cli,direccion:dir,ciudad:ciudad,estado:estadoActual,motivo:motivo,horaSalida:tiempos.sal,horaLlegada:tiempos.lle,horaEntrega:tiempos.ent,minsTrayecto:Math.max(0,toMins(tiempos.lle)-toMins(tiempos.sal)),minsTotales:Math.max(0,toMins(tiempos.ent)-toMins(tiempos.sal)),firmaConfirmada:firmaOk,firma64:firmaOk?cvs.toDataURL('image/png'):null,fotosFactura:fotos.fac.length,fotosEntrega:fotos.evi.length,totalFotos:fotos.fac.length+fotos.evi.length,obs:obs,tipo:'entrega'};
+  entregas.push(reg);localStorage.setItem('ent_v3',JSON.stringify(entregas));
+  enviar(reg);toast('⏳ Guardando y enviando...');
+  setTimeout(function(){limpiarForm();toast('✅ Entrega registrada correctamente');},500);
   actualizarDash();
 }
-
-// ── GUARDAR COBRO PURO ─────────────────────────────────────────────────────
-function guardarCobro() {
-  var mens=g('c-mensajero').value.trim();
-  var nit=g('c-nit').value.trim();
-  var forma=g('c-forma').value;
-  var fecha=g('c-fecha').value;
-  if(!mens){toast('⚠️ Escribe tu nombre');return;}
-  if(!nit){toast('⚠️ Ingresa el NIT');return;}
-  if(!forma){toast('⚠️ Selecciona la forma de pago');return;}
-
-  var pagos=[];
-  facturasCobro.forEach(function(f,i){
-    var card=g('cf-'+i),inp=g('cfp-'+i);
-    if(card&&card.classList.contains('sel')&&inp&&parseFloat(inp.value)>0){
-      pagos.push({documento:f.documento,transaccion:f.transaccion||'03',valor:parseFloat(inp.value)});
-    }
-  });
-  if(!pagos.length){toast('⚠️ Selecciona al menos una factura');return;}
-
-  var btn=g('c-btn-guardar');
-  btn.disabled=true; btn.textContent='⏳ Enviando a HGI...';
-
-  var data={
-    tipo:'pago_hgi',
-    mensajero:mens,
-    nit:nit,
-    cliente:g('c-nombre').textContent.replace('Cliente: ',''),
-    pagos:pagos,
-    formaPago:forma,
-    fecha:new Date(fecha).toISOString(),
-    observaciones:g('c-obs').value.trim(),
-  };
-
-  enviarPagoHGI(data, function(ok){
-    btn.disabled=false; btn.textContent='💾 Registrar cobro en HGI';
-    if(ok){
-      var reg={id:Date.now(),fecha:hoy(),tipo:'cobro',mensajero:mens,nit:nit,
-        cliente:data.cliente,pagos:pagos,formaPago:forma,fotos:fotosCobro.length};
-      cobros.push(reg);
-      localStorage.setItem('cob_v1',JSON.stringify(cobros));
-      toast('✅ Cobro registrado en HGI');
-      setTimeout(function(){limpiarCobro();actualizarDash();},800);
-    } else {
-      toast('❌ Error al registrar en HGI');
-    }
-  });
-}
-
-// ── ENVIAR DATOS ───────────────────────────────────────────────────────────
-function enviarDatos(datos) {
-  try{
-    var b64=btoa(unescape(encodeURIComponent(JSON.stringify(datos))));
-    var url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(b64);
-    if(typeof fetch!=='undefined') fetch(url,{mode:'no-cors'}).catch(function(){});
-  }catch(e){console.log('Error envio:',e);}
-}
-
-function enviarPagoHGI(data, callback) {
-  fetch(APPS_SCRIPT_URL,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(data),
-  })
-  .then(function(r){return r.json();})
-  .then(function(resp){if(callback) callback(resp.ok);})
-  .catch(function(){if(callback) callback(false);});
-}
-
-// ── LIMPIAR ────────────────────────────────────────────────────────────────
-function limpiarForm() {
-  ['f-mensajero','f-pedido','f-cliente','f-dir','f-ciudad','f-obs','ce-nit'].forEach(function(id){g(id).value='';});
-  g('f-motivo').value='';g('motivo-blk').style.display='none';g('estado-sel').innerHTML='';
-  estadoActual='';firmaOk=false;tiempos={sal:null,lle:null,ent:null};fotos={fac:[],evi:[]};
-  ['sal','lle','ent'].forEach(function(t){var c=g('chip-'+t);c.textContent='Sin registrar';c.classList.remove('ok');});
-  renderFotos('fac');renderFotos('evi');limpiarFirma();
-  g('cobro-entrega').style.display='none';g('ce-facturas').innerHTML='';g('ce-pago').style.display='none';
-  cobroEnEntrega=false;facturasEntrega=[];g('ce-nombre').textContent='';g('ce-total').textContent='$0';
-  var h=String(new Date().getHours()).padStart(2,'0')+':'+String(new Date().getMinutes()).padStart(2,'0');
-  g('t-sal').value=h;g('t-lle').value=h;g('t-ent').value=h;
-}
-
-function limpiarCobro() {
-  g('c-mensajero').value='';g('c-nit').value='';g('c-obs').value='';g('c-forma').value='';
-  g('c-nombre').textContent='';g('c-card-facturas').style.display='none';g('c-card-pago').style.display='none';
-  g('c-card-foto').style.display='none';g('c-card-obs').style.display='none';g('c-btn-guardar').style.display='none';
-  g('c-total').textContent='$0';facturasCobro=[];fotosCobro=[];renderFotosCobro();
-  g('c-fecha').value=new Date().toISOString().slice(0,10);
-}
-
-// ── HISTORIAL ──────────────────────────────────────────────────────────────
-function renderMis() {
-  var fv=g('f-filtro').value.toLowerCase();
-  var hoyStr=hoy();
-  var lista=entregas.filter(function(e){return e.fecha===hoyStr;})
-    .concat(cobros.filter(function(c){return c.fecha===hoyStr;}))
-    .sort(function(a,b){return b.id-a.id;});
-  if(fv) lista=lista.filter(function(r){return r.mensajero&&r.mensajero.toLowerCase().indexOf(fv)>=0;});
-  var cont=g('lista-mis');
-  if(!lista.length){cont.innerHTML='<div class="empty">Sin registros hoy</div>';return;}
-  cont.innerHTML=lista.map(function(r){
-    if(r.tipo==='cobro'){
-      var total=r.pagos.reduce(function(a,p){return a+p.valor;},0);
-      return '<div class="reg cobro"><div class="reg-head"><span class="reg-titulo">💵 Cobro '+fmt(total)+'</span><span class="badge badge-morado">HGI ✓</span></div>'+
-        '<div class="reg-det">👤 <b>'+r.mensajero+'</b><br>🏢 '+r.cliente+' | NIT: '+r.nit+'<br>'+r.formaPago+'</div></div>';
-    }
-    return '<div class="reg '+(r.estado==='Entregado'?'ent':'noent')+'"><div class="reg-head"><span class="reg-titulo">📦 #'+r.numPedido+'</span>'+
-      '<span class="badge '+(r.estado==='Entregado'?'badge-verde':'badge-rojo')+'">'+r.estado+'</span></div>'+
-      '<div class="reg-det">👤 <b>'+r.mensajero+'</b><br>🏢 '+r.cliente+'<br>'+
-      '🕐 '+r.horaSalida+' → '+r.horaEntrega+' | ⏱ '+r.minsTotales+' min'+
-      (r.motivo?'<br>⚠️ '+r.motivo:'')+'</div></div>';
-  }).join('');
-}
-
-// ── DASHBOARD ──────────────────────────────────────────────────────────────
-function actualizarDash() {
-  var hoyStr=hoy();
-  var h=entregas.filter(function(e){return e.fecha===hoyStr;});
-  var c=cobros.filter(function(c){return c.fecha===hoyStr;});
-  var ent=h.filter(function(e){return e.estado==='Entregado';});
-  var ef=h.length?Math.round(ent.length/h.length*100):0;
-  var totalCobrado=c.reduce(function(a,r){return a+r.pagos.reduce(function(b,p){return b+p.valor;},0);},0);
-  g('kpi-tot').textContent=h.length;
-  g('kpi-ent').textContent=ent.length;
-  g('kpi-noent').textContent=h.length-ent.length;
-  g('kpi-ef').textContent=ef+'%';
-  g('kpi-cobros').textContent=fmt(totalCobrado);
-  if(ent.length){var ts=ent.map(function(e){return e.minsTotales||0;});g('kpi-tp').textContent=Math.round(ts.reduce(function(a,b){return a+b;},0)/ts.length)+' min';}
-}
-
-// ── RANKING ────────────────────────────────────────────────────────────────
-function renderRank() {
-  var hoyStr=hoy();
-  var h=entregas.filter(function(e){return e.fecha===hoyStr;});
-  if(!h.length)return;
-  var pm={};
-  h.forEach(function(e){
-    if(!pm[e.mensajero])pm[e.mensajero]={tot:0,ent:0,ts:[]};
-    pm[e.mensajero].tot++;
-    if(e.estado==='Entregado'){pm[e.mensajero].ent++;pm[e.mensajero].ts.push(e.minsTotales||0);}
-  });
-  var rank=Object.entries(pm).map(function(kv){
-    var n=kv[0],d=kv[1];
-    return{nombre:n,tot:d.tot,ent:d.ent,ef:Math.round(d.ent/d.tot*100),
-      tp:d.ts.length?Math.round(d.ts.reduce(function(a,b){return a+b;},0)/d.ts.length):999};
-  }).sort(function(a,b){return b.ef!==a.ef?b.ef-a.ef:a.tp-b.tp;});
-  var cls=['r1','r2','r3'];
-  g('lista-rank').innerHTML=rank.map(function(r,i){
-    return '<div class="rank-item"><div class="rank-num '+(cls[i]||'rn')+'">'+(i+1)+'</div>'+
-      '<div class="rank-info"><div class="rank-nom">'+r.nombre+'</div>'+
-      '<div class="rank-st">'+r.ent+'/'+r.tot+' entregas · <span class="badge '+(r.ef>=90?'badge-verde':r.ef>=70?'badge-naranja':'badge-rojo')+'">'+r.ef+'%</span></div></div>'+
-      '<div class="rank-t">'+(r.tp<999?r.tp+' min':'—')+'</div></div>';
-  }).join('');
-}
-
-// ── EXPORTAR CSV ───────────────────────────────────────────────────────────
-function exportCSV() {
-  if(!entregas.length){toast('Sin datos');return;}
-  var h=['Fecha','Mensajero','Pedido','Cliente','Estado','Salida','Llegada','Entrega','Mins','Firma','Fotos','Observaciones'];
-  var rows=entregas.map(function(e){
-    return [e.fecha,e.mensajero,e.numPedido,e.cliente,e.estado,e.horaSalida,e.horaLlegada,e.horaEntrega,e.minsTotales,e.firmaConfirmada?'Sí':'No',e.totalFotos,e.obs]
-      .map(function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';});
-  });
-  var csv='\uFEFF'+[h].concat(rows).map(function(r){return r.join(',');}).join('\n');
-  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  var a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);a.download='Entregas_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
-  toast('📥 CSV exportado');
-}
-
-function jsonpCartera(url, onSuccess, onError) {
-  var cbName = 'cb_' + Date.now();
-  window[cbName] = function(data) {
-    delete window[cbName];
-    var s = document.getElementById('jsonp_sc');
-    if(s) s.remove();
-    onSuccess(data);
-  };
-  var s = document.createElement('script');
-  s.id = 'jsonp_sc';
-  s.onerror = function(){ if(onError) onError(); };
-  s.src = url + '&callback=' + cbName;
-  document.head.appendChild(s);
-}
+function enviar(datos){try{var b64=btoa(unescape(encodeURIComponent(JSON.stringify(datos))));var url=APPS_SCRIPT_URL+'?data='+encodeURIComponent(b64);new Image().src=url;if(typeof fetch!=='undefined')fetch(url,{mode:'no-cors'}).catch(function(){});}catch(e){console.log('Error envío:',e);}}
+function limpiarForm(){['f-mensajero','f-pedido','f-cliente','f-dir','f-ciudad','f-obs'].forEach(function(id){g(id).value='';});g('f-motivo').value='';g('motivo-blk').style.display='none';g('estado-sel').innerHTML='';estadoActual='';firmaOk=false;tiempos={sal:null,lle:null,ent:null};fotos={fac:[],evi:[]};['sal','lle','ent'].forEach(function(t){var c=g('chip-'+t);c.textContent='Sin registrar';c.classList.remove('ok');});renderFotos('fac');renderFotos('evi');limpiarFirma();var ahora=new Date(),hh=String(ahora.getHours()).padStart(2,'0'),mm=String(ahora.getMinutes()).padStart(2,'0'),h=hh+':'+mm;g('t-sal').value=h;g('t-lle').value=h;g('t-ent').value=h;}
+function renderMis(){var filtro=g('f-filtro').value.toLowerCase(),hoyStr=hoy();var lista=entregas.filter(function(e){return e.fecha===hoyStr;});if(filtro)lista=lista.filter(function(e){return e.mensajero&&e.mensajero.toLowerCase().indexOf(filtro)>=0;});lista=lista.slice().reverse();var cont=g('lista-mis');if(!lista.length){cont.innerHTML='<div class="empty">Sin entregas hoy</div>';return;}cont.innerHTML=lista.map(function(e){return'<div class="reg '+(e.estado==='Entregado'?'ent':'noent')+'"><div class="reg-head"><span class="reg-titulo">📦 Pedido #'+e.numPedido+'</span><span class="badge '+(e.estado==='Entregado'?'badge-verde':'badge-rojo')+'">'+e.estado+'</span></div><div class="reg-det">👤 <b>'+e.mensajero+'</b><br>🏢 '+e.cliente+'<br>📍 '+e.direccion+(e.ciudad?' — '+e.ciudad:'')+'<br>🕐 '+e.horaSalida+' → '+e.horaLlegada+' → '+e.horaEntrega+'<br>⏱ Trayecto: <b>'+e.minsTrayecto+' min</b> | Total: <b>'+e.minsTotales+' min</b><br>📸 Fotos: '+(e.totalFotos||0)+(e.firmaConfirmada?' | ✍️ <span class="badge badge-verde">Con firma</span>':'')+(e.motivo?'<br>⚠️ '+e.motivo:'')+(e.obs?'<br>📝 '+e.obs:'')+'</div></div>';}).join('');}
+function actualizarDash(){var hoyStr=hoy(),h=entregas.filter(function(e){return e.fecha===hoyStr;}),ent=h.filter(function(e){return e.estado==='Entregado';}),noent=h.filter(function(e){return e.estado==='No entregado';}),ef=h.length?Math.round(ent.length/h.length*100):0,ft=h.reduce(function(a,e){return a+(e.totalFotos||0);},0);g('kpi-tot').textContent=h.length;g('kpi-ent').textContent=ent.length;g('kpi-noent').textContent=noent.length;g('kpi-ef').textContent=ef+'%';g('kpi-fotos').textContent=ft;if(ent.length){var ts=ent.map(function(e){return e.minsTotales||0;});g('kpi-tp').textContent=Math.round(ts.reduce(function(a,b){return a+b;},0)/ts.length)+' min';}if(noent.length){var card=g('card-motivos');card.style.display='block';var mot={};noent.forEach(function(e){mot[e.motivo||'Sin especificar']=(mot[e.motivo||'Sin especificar']||0)+1;});g('lista-motivos').innerHTML=Object.entries(mot).sort(function(a,b){return b[1]-a[1];}).map(function(m){return'<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #EEE;font-size:13px;"><span>'+m[0]+'</span><span class="badge badge-rojo">'+m[1]+'</span></div>';}).join('');}}
+function renderRank(){var hoyStr=hoy(),h=entregas.filter(function(e){return e.fecha===hoyStr;});if(!h.length)return;var pm={};h.forEach(function(e){if(!pm[e.mensajero])pm[e.mensajero]={tot:0,ent:0,ts:[]};pm[e.mensajero].tot++;if(e.estado==='Entregado'){pm[e.mensajero].ent++;pm[e.mensajero].ts.push(e.minsTotales||0);}});var rank=Object.entries(pm).map(function(kv){var n=kv[0],d=kv[1];return{nombre:n,tot:d.tot,ent:d.ent,ef:Math.round(d.ent/d.tot*100),tp:d.ts.length?Math.round(d.ts.reduce(function(a,b){return a+b;},0)/d.ts.length):999};}).sort(function(a,b){return b.ef!==a.ef?b.ef-a.ef:a.tp-b.tp;});var cls=['r1','r2','r3'];g('lista-rank').innerHTML=rank.map(function(r,i){return'<div class="rank-item"><div class="rank-num '+(cls[i]||'rn')+'">'+(i+1)+'</div><div class="rank-info"><div class="rank-nom">'+r.nombre+'</div><div class="rank-st">'+r.ent+'/'+r.tot+' entregas · <span class="badge '+(r.ef>=90?'badge-verde':r.ef>=70?'badge-naranja':'badge-rojo')+'">'+r.ef+'%</span></div></div><div class="rank-t">'+(r.tp<999?r.tp+' min':'—')+'</div></div>';}).join('');}
+function exportCSV(){if(!entregas.length){toast('Sin datos');return;}var h=['Fecha','Mensajero','Pedido','Cliente','Dirección','Ciudad','Estado','Motivo','Hora Salida','Hora Llegada','Hora Entrega','Mins Trayecto','Mins Total','Firma','Fotos Factura','Fotos Entrega','Total Fotos','Observaciones'];var rows=entregas.map(function(e){return[e.fecha,e.mensajero,e.numPedido,e.cliente,e.direccion,e.ciudad,e.estado,e.motivo,e.horaSalida,e.horaLlegada,e.horaEntrega,e.minsTrayecto,e.minsTotales,e.firmaConfirmada?'Sí':'No',e.fotosFactura,e.fotosEntrega,e.totalFotos,e.obs].map(function(v){return'"'+(v||'').toString().replace(/"/g,'""')+'"';});});var csv='\uFEFF'+[h].concat(rows).map(function(r){return r.join(',');}).join('\n');var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Entregas_'+new Date().toISOString().slice(0,10)+'.csv';a.click();toast('📥 CSV exportado');}
 </script>
 </body>
 </html>
