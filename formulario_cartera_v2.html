@@ -27,6 +27,7 @@ textarea{resize:none;height:70px;}
 .btn-verde{background:var(--verde);color:#fff;}
 .btn-gris{background:#95A5A6;color:#fff;}
 .btn-naranja{background:var(--naranja);color:#fff;}
+.btn-azul{background:var(--azul);color:#fff;}
 .btn-sm{padding:10px;font-size:13px;}
 .badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;}
 .badge-verde{background:#D5F0E3;color:var(--verde);}
@@ -41,6 +42,7 @@ textarea{resize:none;height:70px;}
 .reg-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 .reg-titulo{font-weight:700;font-size:13px;}
 .reg-det{font-size:12px;color:#666;line-height:1.7;}
+.empty{text-align:center;padding:30px;color:#AAA;font-size:13px;}
 .vcard{background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
 .vcard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .vcard-nom{font-weight:700;font-size:13px;color:var(--azul);}
@@ -54,14 +56,25 @@ textarea{resize:none;height:70px;}
 .foto-area p{font-size:13px;color:#888;margin-top:6px;}
 .fotos-prev{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
 .fotos-prev img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--verde);}
-.saldo-box{background:#E8F5E9;border:1px solid #7ECE9E;border-radius:8px;padding:12px;margin-bottom:12px;display:none;}
-.saldo-lbl{font-size:12px;color:#555;margin-bottom:4px;}
-.saldo-val{font-size:22px;font-weight:700;color:var(--verde);}
-.empty{text-align:center;padding:30px;color:#AAA;font-size:13px;}
-.sep{height:1px;background:var(--gris);margin:10px 0;}
-.small{font-size:11px;color:#888;}
-.tc{text-align:center;}
-.mt8{margin-top:8px;}
+
+/* Facturas pendientes */
+.fact-card{border:1.5px solid #DDD;border-radius:10px;padding:12px;margin-bottom:10px;background:#F8F9FA;cursor:pointer;transition:all .2s;}
+.fact-card.sel{border-color:var(--morado);background:#F3E5F5;}
+.fact-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.fact-num{font-weight:700;font-size:14px;color:var(--azul);}
+.fact-det{font-size:12px;color:#555;line-height:1.8;}
+.fact-saldo{font-size:16px;font-weight:700;color:var(--rojo);}
+.fact-pago-input{width:100%;padding:10px;border:1.5px solid var(--morado);border-radius:8px;font-size:15px;margin-top:8px;display:none;}
+.fact-card.sel .fact-pago-input{display:block;}
+.loading{text-align:center;padding:20px;color:#888;font-size:13px;}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid #DDD;border-top-color:var(--morado);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.total-box{background:#E8F5E9;border:1px solid #7ECE9E;border-radius:8px;padding:12px;margin-bottom:12px;}
+.total-lbl{font-size:12px;color:#555;margin-bottom:4px;}
+.total-val{font-size:22px;font-weight:700;color:var(--verde);}
+.nit-row{display:flex;gap:8px;margin-bottom:0;}
+.nit-row input{flex:1;margin-bottom:0;}
+.nit-row button{padding:12px 16px;background:var(--azul);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;white-space:nowrap;font-size:13px;}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#2C3E50;color:#fff;padding:11px 22px;border-radius:22px;font-size:13px;font-weight:700;opacity:0;transition:opacity .3s;z-index:999;white-space:nowrap;pointer-events:none;}
 #toast.show{opacity:1;}
 </style>
@@ -89,45 +102,23 @@ textarea{resize:none;height:70px;}
   </div>
 
   <div class="card">
-    <div class="card-title">🏢 Datos del cliente</div>
+    <div class="card-title">🏢 Buscar cliente</div>
     <label>NIT del cliente</label>
-    <input type="text" id="f-nit" placeholder="Ej: 800123456" inputmode="numeric">
-    <label>Nombre del cliente</label>
-    <input type="text" id="f-cliente" placeholder="Razón social completa">
+    <div class="nit-row">
+      <input type="text" id="f-nit" placeholder="Ej: 800123456" inputmode="numeric">
+      <button onclick="buscarFacturas()">🔍 Buscar</button>
+    </div>
+    <div id="nombre-cliente" style="font-size:13px;color:var(--azul);font-weight:700;margin-top:4px;min-height:18px;"></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">📄 Datos de la factura</div>
-    <label>Número de factura</label>
-    <input type="text" id="f-factura" placeholder="Ej: 29458" inputmode="numeric">
-    <label>Fecha de la factura</label>
-    <input type="date" id="f-fec-fac">
-    <label>Valor total de la factura ($)</label>
-    <input type="number" id="f-val-fac" placeholder="0" inputmode="numeric" min="0" oninput="calcSaldo()">
-    <label>Días de vencimiento</label>
-    <select id="f-plazo">
-      <option value="0">Contado (0 días)</option>
-      <option value="15">15 días</option>
-      <option value="30">30 días</option>
-      <option value="45">45 días</option>
-      <option value="60">60 días</option>
-      <option value="90">90 días</option>
-    </select>
+  <!-- Facturas pendientes -->
+  <div class="card" id="card-facturas" style="display:none;">
+    <div class="card-title">📄 Facturas pendientes — selecciona las que va a pagar</div>
+    <div id="lista-facturas"><div class="loading"><span class="spinner"></span>Consultando...</div></div>
   </div>
 
-  <div class="card">
-    <div class="card-title">💵 Pago / Abono</div>
-    <label>Tipo de movimiento</label>
-    <select id="f-tipo" onchange="onTipo()">
-      <option value="">— Selecciona tipo —</option>
-      <option>Pago total</option>
-      <option>Abono parcial</option>
-      <option>Descuento</option>
-      <option>Nota crédito</option>
-      <option>Devolución</option>
-    </select>
-    <label>Valor del pago / abono ($)</label>
-    <input type="number" id="f-val-pago" placeholder="0" inputmode="numeric" min="0" oninput="calcSaldo()">
+  <div class="card" id="card-pago" style="display:none;">
+    <div class="card-title">💵 Datos del pago</div>
     <label>Fecha del pago</label>
     <input type="date" id="f-fec-pago">
     <label>Forma de pago</label>
@@ -136,28 +127,28 @@ textarea{resize:none;height:70px;}
       <option>Efectivo</option>
       <option>Transferencia bancaria</option>
       <option>Cheque</option>
-      <option>Consignación</option>
-      <option>Débito automático</option>
+      <option>Consignacion</option>
+      <option>Debito automatico</option>
     </select>
-    <div class="saldo-box" id="saldo-box">
-      <div class="saldo-lbl">Saldo pendiente estimado:</div>
-      <div class="saldo-val" id="saldo-val">$0</div>
+    <div class="total-box">
+      <div class="total-lbl">Total a registrar:</div>
+      <div class="total-val" id="total-val">$0</div>
     </div>
   </div>
 
-  <!-- FOTO RECIBO -->
-  <div class="card">
-    <div class="card-title">📸 Foto del recibo / factura</div>
+  <!-- Foto recibo -->
+  <div class="card" id="card-foto" style="display:none;">
+    <div class="card-title">📸 Foto del recibo</div>
     <div class="fotos-prev" id="prev-cart"></div>
     <div class="foto-area" id="zona-cart" onclick="document.getElementById('inp-cart').click()">
       <div style="font-size:28px;">🧾</div>
       <p>Toca para fotografiar el recibo</p>
     </div>
     <input type="file" id="inp-cart" accept="image/*" multiple style="display:none" onchange="addFotos(this)">
-    <button class="btn btn-gris btn-sm" onclick="document.getElementById('inp-cart').click()" style="margin-bottom:0;">+ Agregar foto recibo</button>
+    <button class="btn btn-gris btn-sm" onclick="document.getElementById('inp-cart').click()" style="margin-bottom:0;">+ Agregar foto</button>
   </div>
 
-  <div class="card">
+  <div class="card" id="card-obs" style="display:none;">
     <div class="card-title">📝 Observaciones</div>
     <textarea id="f-obs" placeholder="Compromiso de pago, notas, acuerdos..."></textarea>
     <label>¿Cliente bloqueado por cupo?</label>
@@ -168,7 +159,7 @@ textarea{resize:none;height:70px;}
     </select>
   </div>
 
-  <button class="btn btn-morado" style="font-size:16px;padding:16px;" onclick="guardarCartera()">💾 Guardar registro de cartera</button>
+  <button class="btn btn-morado" id="btn-guardar" style="font-size:16px;padding:16px;display:none;" onclick="guardarCartera()">💾 Registrar pago en HGI</button>
   <button class="btn btn-gris" onclick="limpiarForm()">🔄 Limpiar formulario</button>
   <div style="height:24px;"></div>
 </div>
@@ -188,7 +179,7 @@ textarea{resize:none;height:70px;}
     </select>
   </div>
   <div id="lista-hist"><div class="empty">Sin registros aún</div></div>
-  <button class="btn btn-naranja mt8" onclick="exportCSV()">📥 Exportar a Excel (CSV)</button>
+  <button class="btn btn-naranja" style="margin-top:8px;" onclick="exportCSV()">📥 Exportar a Excel (CSV)</button>
   <div style="height:24px;"></div>
 </div>
 
@@ -197,9 +188,9 @@ textarea{resize:none;height:70px;}
   <div class="card">
     <div class="card-title">📊 Indicadores generales</div>
     <div class="kpi-grid">
-      <div class="kpi"><div class="kpi-val" id="k-fac">0</div><div class="kpi-lbl">Facturas</div></div>
+      <div class="kpi"><div class="kpi-val" id="k-fac">0</div><div class="kpi-lbl">Registros</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--verde)" id="k-pag">$0</div><div class="kpi-lbl">Recaudado</div></div>
-      <div class="kpi"><div class="kpi-val" style="color:var(--rojo)" id="k-pen">$0</div><div class="kpi-lbl">Pendiente</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--naranja)" id="k-fac2">0</div><div class="kpi-lbl">Facturas</div></div>
       <div class="kpi"><div class="kpi-val" style="color:var(--naranja)" id="k-ef">0%</div><div class="kpi-lbl">Efectividad</div></div>
     </div>
   </div>
@@ -214,17 +205,27 @@ textarea{resize:none;height:70px;}
 <div id="toast"></div>
 
 <script>
-var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxkIXykB5lObOHxXSQnPcjucA3QXF0shgRqZrddkM4bvEua8H__oNf31ocxR-t9hi_CRA/exec';
-var carteras = JSON.parse(localStorage.getItem('cart_v3') || '[]');
-var fotosCart = [];
+// ============================================================
+//  CONFIGURACIÓN — reemplaza con la URL de tu Web App
+// ============================================================
+var APPS_SCRIPT_URL = 'REEMPLAZAR_CON_URL_DEL_WEB_APP';
+
+// ============================================================
+//  ESTADO
+// ============================================================
+var historial  = JSON.parse(localStorage.getItem('cart_hgi_v1') || '[]');
+var fotosCart  = [];
+var facturasCliente = [];
 
 window.onload = function() {
   var hoy = new Date().toISOString().slice(0,10);
   document.getElementById('f-fec-pago').value = hoy;
-  document.getElementById('f-fec-fac').value  = hoy;
   actualizarRes();
 };
 
+// ============================================================
+//  NAVEGACIÓN
+// ============================================================
 function tab(id, el) {
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
   document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('on');});
@@ -237,7 +238,7 @@ function tab(id, el) {
 function toast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show');}, 3000);
+  setTimeout(function(){t.classList.remove('show');}, 3500);
 }
 
 function g(id){ return document.getElementById(id); }
@@ -245,24 +246,207 @@ function g(id){ return document.getElementById(id); }
 function fmt(v) {
   try {
     v = parseFloat(v);
-    if(v>=1e6) return '$'+( v/1e6).toFixed(1)+'M';
-    return '$'+v.toLocaleString('es-CO');
+    if(isNaN(v)) return '$0';
+    if(v>=1e6) return '$'+(v/1e6).toFixed(1)+'M';
+    return '$'+Math.round(v).toLocaleString('es-CO');
   } catch(e){ return '$0'; }
 }
 
-function onTipo() {
-  var tipo = g('f-tipo').value;
-  g('saldo-box').style.display = tipo ? 'block' : 'none';
-  calcSaldo();
+// ============================================================
+//  BUSCAR FACTURAS PENDIENTES
+// ============================================================
+function buscarFacturas() {
+  var nit = g('f-nit').value.trim();
+  if (!nit) { toast('⚠️ Ingresa el NIT del cliente'); return; }
+
+  g('card-facturas').style.display = 'block';
+  g('card-pago').style.display     = 'none';
+  g('card-foto').style.display     = 'none';
+  g('card-obs').style.display      = 'none';
+  g('btn-guardar').style.display   = 'none';
+  g('lista-facturas').innerHTML    = '<div class="loading"><span class="spinner"></span>Consultando facturas en HGI...</div>';
+  g('nombre-cliente').textContent  = '';
+  facturasCliente = [];
+
+  var url = APPS_SCRIPT_URL + '?action=cartera&nit=' + encodeURIComponent(nit);
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      if (!data.ok) {
+        g('lista-facturas').innerHTML = '<div class="empty">⚠️ ' + (data.error || 'Error consultando HGI') + '</div>';
+        return;
+      }
+      facturasCliente = data.facturas || [];
+      renderFacturas();
+    })
+    .catch(function(err) {
+      g('lista-facturas').innerHTML = '<div class="empty">⚠️ Error de conexión: ' + err.message + '</div>';
+    });
 }
 
-function calcSaldo() {
-  var fac  = parseFloat(g('f-val-fac').value)  || 0;
-  var pago = parseFloat(g('f-val-pago').value) || 0;
-  var sal  = Math.max(0, fac - pago);
-  g('saldo-val').textContent = fmt(sal);
+function renderFacturas() {
+  var cont = g('lista-facturas');
+
+  if (!facturasCliente.length) {
+    cont.innerHTML = '<div class="empty">✅ Este cliente no tiene facturas pendientes</div>';
+    return;
+  }
+
+  // Mostrar nombre del primer registro
+  if (facturasCliente[0] && facturasCliente[0].tercero) {
+    g('nombre-cliente').textContent = 'Cliente: ' + facturasCliente[0].tercero;
+  }
+
+  cont.innerHTML = facturasCliente.map(function(f, i) {
+    var colorEdad = f.edad > 60 ? 'var(--rojo)' : f.edad > 30 ? 'var(--naranja)' : 'var(--verde)';
+    return '<div class="fact-card" id="fc-'+i+'" onclick="toggleFactura('+i+')">' +
+      '<div class="fact-card-head">' +
+      '<span class="fact-num">Factura #' + f.documento + '</span>' +
+      '<span class="fact-saldo">' + fmt(f.saldoFinal) + '</span>' +
+      '</div>' +
+      '<div class="fact-det">' +
+      '📅 Fecha: ' + f.fecha + ' | Vence: ' + f.fechaVencimiento + '<br>' +
+      '⏱ <span style="color:' + colorEdad + ';font-weight:700;">' + f.edad + ' días vencida</span>' +
+      '</div>' +
+      '<input class="fact-pago-input" type="number" id="fp-'+i+'" ' +
+      'placeholder="Valor a pagar (máx ' + Math.round(f.saldoFinal).toLocaleString('es-CO') + ')..." ' +
+      'inputmode="numeric" min="1" max="' + f.saldoFinal + '" ' +
+      'oninput="calcTotal()" onclick="event.stopPropagation()">' +
+      '</div>';
+  }).join('');
+
+  g('card-pago').style.display   = 'block';
+  g('card-foto').style.display   = 'block';
+  g('card-obs').style.display    = 'block';
+  g('btn-guardar').style.display = 'block';
 }
 
+function toggleFactura(i) {
+  var card = g('fc-'+i);
+  var input = g('fp-'+i);
+  card.classList.toggle('sel');
+  if (card.classList.contains('sel')) {
+    // Precargar con el saldo total
+    if (!input.value) {
+      input.value = Math.round(facturasCliente[i].saldoFinal);
+    }
+    input.focus();
+  } else {
+    input.value = '';
+  }
+  calcTotal();
+}
+
+function calcTotal() {
+  var total = 0;
+  facturasCliente.forEach(function(f, i) {
+    var card = g('fc-'+i);
+    var input = g('fp-'+i);
+    if (card && card.classList.contains('sel') && input && input.value) {
+      total += parseFloat(input.value) || 0;
+    }
+  });
+  g('total-val').textContent = fmt(total);
+}
+
+// ============================================================
+//  GUARDAR Y ENVIAR A HGI
+// ============================================================
+function guardarCartera() {
+  var vendedor = g('f-vendedor').value.trim();
+  var nit      = g('f-nit').value.trim();
+  var fecPago  = g('f-fec-pago').value;
+  var forma    = g('f-forma').value;
+  var obs      = g('f-obs').value.trim();
+  var bloq     = g('f-bloq').value;
+
+  if (!vendedor) { toast('⚠️ Escribe tu nombre'); return; }
+  if (!nit)      { toast('⚠️ Ingresa el NIT'); return; }
+  if (!fecPago)  { toast('⚠️ Ingresa la fecha del pago'); return; }
+  if (!forma)    { toast('⚠️ Selecciona la forma de pago'); return; }
+
+  // Recolectar facturas seleccionadas
+  var pagos = [];
+  facturasCliente.forEach(function(f, i) {
+    var card  = g('fc-'+i);
+    var input = g('fp-'+i);
+    if (card && card.classList.contains('sel') && input && parseFloat(input.value) > 0) {
+      pagos.push({
+        documento:   f.documento,
+        transaccion: f.transaccion || "03",
+        valor:       parseFloat(input.value),
+      });
+    }
+  });
+
+  if (!pagos.length) { toast('⚠️ Selecciona al menos una factura'); return; }
+
+  var totalPago = pagos.reduce(function(a,p){return a+p.valor;}, 0);
+  if (totalPago <= 0) { toast('⚠️ El valor total debe ser mayor a 0'); return; }
+
+  // Deshabilitar botón mientras envía
+  var btn = g('btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Enviando a HGI...';
+  toast('⏳ Registrando pago...');
+
+  var payload = {
+    nit:           nit,
+    cliente:       g('nombre-cliente').textContent.replace('Cliente: ', ''),
+    vendedor:      vendedor,
+    pagos:         pagos,
+    formaPago:     forma,
+    observaciones: obs,
+    bloqueado:     bloq,
+    fecha:         new Date(fecPago).toISOString(),
+    totalFotos:    fotosCart.length,
+  };
+
+  fetch(APPS_SCRIPT_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload),
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data) {
+    btn.disabled = false;
+    btn.textContent = '💾 Registrar pago en HGI';
+
+    if (data.ok) {
+      // Guardar en historial local
+      var reg = {
+        id:        Date.now(),
+        fecha:     new Date().toLocaleDateString('es-CO'),
+        vendedor:  vendedor,
+        nit:       nit,
+        cliente:   payload.cliente,
+        pagos:     pagos,
+        totalPago: totalPago,
+        formaPago: forma,
+        obs:       obs,
+        bloq:      bloq,
+        fotos:     fotosCart.length,
+      };
+      historial.push(reg);
+      localStorage.setItem('cart_hgi_v1', JSON.stringify(historial));
+
+      toast('✅ Pago registrado en HGI correctamente');
+      setTimeout(function(){ limpiarForm(); actualizarRes(); }, 1000);
+    } else {
+      toast('❌ Error: ' + (data.error || 'No se pudo registrar'));
+    }
+  })
+  .catch(function(err) {
+    btn.disabled = false;
+    btn.textContent = '💾 Registrar pago en HGI';
+    toast('❌ Error de conexión: ' + err.message);
+  });
+}
+
+// ============================================================
+//  FOTOS
+// ============================================================
 function addFotos(input) {
   var archivos = Array.from(input.files);
   if (!archivos.length) return;
@@ -302,176 +486,106 @@ function renderFotos() {
 
 function delFoto(i) { fotosCart.splice(i,1); renderFotos(); }
 
-function guardarCartera() {
-  var vendedor = g('f-vendedor').value.trim();
-  var nit      = g('f-nit').value.trim();
-  var cliente  = g('f-cliente').value.trim();
-  var factura  = g('f-factura').value.trim();
-  var fecFac   = g('f-fec-fac').value;
-  var valFac   = parseFloat(g('f-val-fac').value) || 0;
-  var plazo    = parseInt(g('f-plazo').value) || 0;
-  var tipo     = g('f-tipo').value;
-  var valPago  = parseFloat(g('f-val-pago').value) || 0;
-  var fecPago  = g('f-fec-pago').value;
-  var forma    = g('f-forma').value;
-  var obs      = g('f-obs').value.trim();
-  var bloq     = g('f-bloq').value;
-
-  if (!vendedor) { toast('⚠️ Escribe tu nombre'); return; }
-  if (!nit)      { toast('⚠️ Ingresa el NIT'); return; }
-  if (!cliente)  { toast('⚠️ Ingresa el nombre del cliente'); return; }
-  if (!factura)  { toast('⚠️ Ingresa el número de factura'); return; }
-  if (!tipo)     { toast('⚠️ Selecciona el tipo de movimiento'); return; }
-  if (!fecPago)  { toast('⚠️ Ingresa la fecha del pago'); return; }
-
-  // Calcular vencimiento y mora
-  var fechaVenc = '';
-  var diasMora = 0;
-  if (fecFac) {
-    var fv = new Date(fecFac);
-    fv.setDate(fv.getDate() + plazo);
-    fechaVenc = fv.toISOString().slice(0,10);
-    var hoy = new Date();
-    diasMora = Math.max(0, Math.round((hoy - fv) / 86400000));
-  }
-
-  var saldo = Math.max(0, valFac - valPago);
-
-  var reg = {
-    id: Date.now(),
-    fecha: new Date().toLocaleDateString('es-CO'),
-    tipo: 'cartera',
-    vendedor: vendedor, nit: nit, cliente: cliente,
-    factura: factura, fecFac: fecFac, valFac: valFac,
-    diasVenc: plazo, fechaVenc: fechaVenc, diasMora: diasMora,
-    tipoPago: tipo, valPago: valPago, fecPago: fecPago,
-    forma: forma, saldo: saldo, bloqueado: bloq, obs: obs,
-    totalFotos: fotosCart.length
-  };
-
-  carteras.push(reg);
-  localStorage.setItem('cart_v3', JSON.stringify(carteras));
-
-  // Enviar al script
-  enviar(reg);
-  toast('⏳ Guardando y enviando...');
-  setTimeout(function(){ limpiarForm(); toast('✅ Registro de cartera guardado'); }, 500);
-  actualizarRes();
-}
-
-function enviar(datos) {
-  try {
-    var json = JSON.stringify(datos);
-    var b64  = btoa(unescape(encodeURIComponent(json)));
-    var url  = APPS_SCRIPT_URL + '?data=' + encodeURIComponent(b64);
-    var img  = new Image();
-    img.src  = url;
-    if (typeof fetch !== 'undefined') {
-      fetch(url, {mode:'no-cors'}).catch(function(){});
-    }
-  } catch(e) {
-    console.log('Error envio:', e);
-  }
-}
-
+// ============================================================
+//  LIMPIAR FORMULARIO
+// ============================================================
 function limpiarForm() {
-  ['f-vendedor','f-nit','f-cliente','f-factura','f-val-fac','f-val-pago','f-obs'].forEach(function(id){
-    g(id).value = '';
-  });
-  g('f-tipo').value  = '';
+  ['f-vendedor','f-nit','f-obs'].forEach(function(id){ g(id).value = ''; });
   g('f-forma').value = '';
-  g('f-plazo').value = '0';
   g('f-bloq').value  = 'No';
-  g('saldo-box').style.display = 'none';
+  g('nombre-cliente').textContent = '';
+  g('card-facturas').style.display = 'none';
+  g('card-pago').style.display     = 'none';
+  g('card-foto').style.display     = 'none';
+  g('card-obs').style.display      = 'none';
+  g('btn-guardar').style.display   = 'none';
+  g('total-val').textContent = '$0';
   var hoy = new Date().toISOString().slice(0,10);
   g('f-fec-pago').value = hoy;
-  g('f-fec-fac').value  = hoy;
+  facturasCliente = [];
   fotosCart = [];
   renderFotos();
 }
 
+// ============================================================
+//  HISTORIAL
+// ============================================================
 function renderHist() {
-  var fv = g('f-filtro-v').value.toLowerCase();
-  var ft = g('f-filtro-t').value;
-  var lista = carteras.slice().reverse();
+  var fv   = g('f-filtro-v').value.toLowerCase();
+  var lista = historial.slice().reverse();
   if (fv) lista = lista.filter(function(r){ return r.vendedor && r.vendedor.toLowerCase().indexOf(fv)>=0; });
-  if (ft) lista = lista.filter(function(r){ return r.tipoPago === ft; });
   var cont = g('lista-hist');
   if (!lista.length) { cont.innerHTML = '<div class="empty">Sin registros</div>'; return; }
-  var colores = {'Pago total':'badge-verde','Abono parcial':'badge-naranja','Descuento':'badge-morado','Nota crédito':'badge-morado','Devolución':'badge-rojo'};
   cont.innerHTML = lista.map(function(r) {
+    var factsTxt = r.pagos.map(function(p){ return '#'+p.documento+' ('+fmt(p.valor)+')'; }).join(', ');
     return '<div class="reg">'+
       '<div class="reg-head">'+
-      '<span class="reg-titulo">📄 Fac. #'+r.factura+'</span>'+
-      '<span class="badge '+(colores[r.tipoPago]||'badge-morado')+'">'+r.tipoPago+'</span>'+
+      '<span class="reg-titulo">💵 '+fmt(r.totalPago)+'</span>'+
+      '<span class="badge badge-verde">HGI ✓</span>'+
       '</div>'+
       '<div class="reg-det">'+
       '🏢 <b>'+r.cliente+'</b> | NIT: '+r.nit+'<br>'+
       '👤 '+r.vendedor+'<br>'+
-      '💵 Factura: <b>'+fmt(r.valFac)+'</b> → Pago: <b>'+fmt(r.valPago)+'</b> → Saldo: <b style="color:'+(r.saldo>0?'var(--rojo)':'var(--verde)')+'">'+fmt(r.saldo)+'</b><br>'+
-      '📅 '+r.fecPago+(r.forma?' | '+r.forma:'')+'<br>'+
-      (r.diasMora>0?'⚠️ <span class="badge badge-rojo">'+r.diasMora+' días mora</span><br>':'')+
-      (r.bloqueado!=='No'?'🔒 <span class="badge badge-rojo">Bloqueado: '+r.bloqueado+'</span><br>':'')+
-      '📸 Fotos: '+(r.totalFotos||0)+
-      (r.obs?'<br>📝 '+r.obs:'')+
+      '📄 Facturas: '+factsTxt+'<br>'+
+      '📅 '+r.fecha+' | '+r.formaPago+
+      (r.obs ? '<br>📝 '+r.obs : '')+
       '</div></div>';
   }).join('');
 }
 
+// ============================================================
+//  RESUMEN
+// ============================================================
 function actualizarRes() {
-  var totFac  = carteras.length;
-  var totPag  = carteras.reduce(function(a,r){return a+(r.valPago||0);},0);
-  var totPen  = carteras.reduce(function(a,r){return a+(r.saldo||0);},0);
-  var totFacV = carteras.reduce(function(a,r){return a+(r.valFac||0);},0);
-  var ef      = totFacV>0?Math.round(totPag/totFacV*100):0;
-  g('k-fac').textContent = totFac;
-  g('k-pag').textContent = fmt(totPag);
-  g('k-pen').textContent = fmt(totPen);
-  g('k-ef').textContent  = ef+'%';
+  var totPag  = historial.reduce(function(a,r){return a+(r.totalPago||0);},0);
+  var totFacts = historial.reduce(function(a,r){return a+(r.pagos?r.pagos.length:0);},0);
+  var totReg  = historial.length;
+  g('k-fac').textContent  = totReg;
+  g('k-pag').textContent  = fmt(totPag);
+  g('k-fac2').textContent = totFacts;
+  g('k-ef').textContent   = totReg > 0 ? Math.round(totPag/totReg).toLocaleString('es-CO') : '0';
+
   var pv = {};
-  carteras.forEach(function(r){
-    if(!pv[r.vendedor]) pv[r.vendedor]={fac:0,pag:0,pen:0,n:0};
-    pv[r.vendedor].fac+=(r.valFac||0);
-    pv[r.vendedor].pag+=(r.valPago||0);
-    pv[r.vendedor].pen+=(r.saldo||0);
+  historial.forEach(function(r){
+    if(!pv[r.vendedor]) pv[r.vendedor]={pag:0,n:0,facts:0};
+    pv[r.vendedor].pag  += (r.totalPago||0);
     pv[r.vendedor].n++;
+    pv[r.vendedor].facts += (r.pagos?r.pagos.length:0);
   });
   var cont = g('lista-vend');
   if (!Object.keys(pv).length) { cont.innerHTML='<div class="empty">Sin datos</div>'; return; }
   cont.innerHTML = Object.entries(pv).sort(function(a,b){return b[1].pag-a[1].pag;}).map(function(kv){
     var n=kv[0],d=kv[1];
-    var ef2=d.fac>0?Math.round(d.pag/d.fac*100):0;
     var nom=n.split(' ').slice(0,2).join(' ');
     return '<div class="vcard">'+
       '<div class="vcard-head">'+
       '<span class="vcard-nom">'+nom+'</span>'+
-      '<span class="badge '+(ef2>=80?'badge-verde':ef2>=50?'badge-naranja':'badge-rojo')+'">'+ef2+'%</span>'+
+      '<span class="badge badge-verde">'+d.n+' registros</span>'+
       '</div>'+
-      '<div class="prog-bar"><div class="prog-fill" style="width:'+ef2+'%;background:'+(ef2>=80?'var(--verde)':ef2>=50?'var(--naranja)':'var(--rojo)')+'"></div></div>'+
       '<div class="vcard-stats">'+
-      '<div class="vstat"><div class="vstat-val">'+d.n+'</div><div>facturas</div></div>'+
+      '<div class="vstat"><div class="vstat-val">'+d.facts+'</div><div>facturas</div></div>'+
       '<div class="vstat"><div class="vstat-val" style="color:var(--verde)">'+fmt(d.pag)+'</div><div>recaudado</div></div>'+
-      '<div class="vstat"><div class="vstat-val" style="color:var(--rojo)">'+fmt(d.pen)+'</div><div>pendiente</div></div>'+
+      '<div class="vstat"><div class="vstat-val">'+d.n+'</div><div>visitas</div></div>'+
       '</div></div>';
   }).join('');
 }
 
+// ============================================================
+//  EXPORTAR CSV
+// ============================================================
 function exportCSV() {
-  if (!carteras.length) { toast('Sin datos'); return; }
-  var h=['Fecha','Vendedor','NIT','Cliente','Factura','Fecha Factura','Valor Factura',
-    'Plazo','Vencimiento','Días Mora','Tipo','Valor Pago','Fecha Pago','Forma',
-    'Saldo','Bloqueado','Observaciones'];
-  var rows = carteras.map(function(r){
-    return [r.fecha,r.vendedor,r.nit,r.cliente,r.factura,r.fecFac,r.valFac,
-      r.diasVenc,r.fechaVenc,r.diasMora,r.tipoPago,r.valPago,r.fecPago,
-      r.forma,r.saldo,r.bloqueado,r.obs]
+  if (!historial.length) { toast('Sin datos'); return; }
+  var h=['Fecha','Vendedor','NIT','Cliente','Facturas','Total Pago','Forma Pago','Observaciones'];
+  var rows = historial.map(function(r){
+    var facts = r.pagos.map(function(p){return '#'+p.documento+'($'+p.valor+')';}).join(' | ');
+    return [r.fecha,r.vendedor,r.nit,r.cliente,facts,r.totalPago,r.formaPago,r.obs||'']
       .map(function(v){return '"'+(v||'').toString().replace(/"/g,'""')+'"';});
   });
   var csv='\uFEFF'+[h].concat(rows).map(function(r){return r.join(',');}).join('\n');
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a');
-  a.href=url;a.download='Cartera_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.href=url;a.download='Cartera_HGI_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();URL.revokeObjectURL(url);
   toast('📥 CSV exportado');
 }
