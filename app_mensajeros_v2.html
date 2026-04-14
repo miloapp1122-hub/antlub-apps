@@ -237,7 +237,7 @@ function guardarEntrega(){
   if(!estadoActual){toast('⚠️ Selecciona el estado de la entrega');return;}if(!tiempos.ent){toast('⚠️ Confirma la hora de entrega');return;}
   if(estadoActual==='No entregado'&&!motivo){toast('⚠️ Selecciona el motivo');return;}
   function toMins(t){var p=t.split(':');return parseInt(p[0])*60+parseInt(p[1]);}
-  var reg={id:Date.now(),fecha:hoy(),mensajero:mens,numPedido:pedido,cliente:cli,direccion:dir,ciudad:ciudad,estado:estadoActual,motivo:motivo,horaSalida:tiempos.sal,horaLlegada:tiempos.lle,horaEntrega:tiempos.ent,minsTrayecto:Math.max(0,toMins(tiempos.lle)-toMins(tiempos.sal)),minsTotales:Math.max(0,toMins(tiempos.ent)-toMins(tiempos.sal)),firmaConfirmada:firmaOk,firma64:firmaOk?cvs.toDataURL('image/png'):null,fotosFactura:fotos.fac.length,fotosEntrega:fotos.evi.length,totalFotos:fotos.fac.length+fotos.evi.length,obs:obs,tipo:'entrega'};
+  var reg={id:Date.now(),fecha:hoy(),mensajero:mens,numPedido:pedido,cliente:cli,direccion:dir,ciudad:ciudad,estado:estadoActual,motivo:motivo,horaSalida:tiempos.sal,horaLlegada:tiempos.lle,horaEntrega:tiempos.ent,minsTrayecto:Math.max(0,toMins(tiempos.lle)-toMins(tiempos.sal)),minsTotales:Math.max(0,toMins(tiempos.ent)-toMins(tiempos.sal)),firmaConfirmada:firmaOk,fotosFactura:fotos.fac.length,fotosEntrega:fotos.evi.length,totalFotos:fotos.fac.length+fotos.evi.length,obs:obs,tipo:'entrega'};
   entregas.push(reg);localStorage.setItem('ent_v3',JSON.stringify(entregas));
   enviar(reg);toast('⏳ Guardando y enviando...');
   setTimeout(function(){limpiarForm();toast('✅ Entrega registrada correctamente');},500);
