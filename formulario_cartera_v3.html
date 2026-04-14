@@ -239,16 +239,11 @@ async function buscarCartera() {
   cont.innerHTML = '<div class="loading"><div class="loading-spinner"></div><br>Consultando cartera en HGI...</div>';
 
   try {
-    var url = PROXY_URL + '/api/Cartera/Obtener?anyo=2026&periodo=*&codigo_tercero=' + encodeURIComponent(nit) + '&codigo_local=0&tipo_cartera=*&grupo=*&codigo_clase=0';
+    var url = PROXY_URL + '/api/Cartera/Obtener?anyo=*&periodo=*&codigo_tercero=' + encodeURIComponent(nit) + '&codigo_local=0&tipo_cartera=*&grupo=*&codigo_clase=0';
     var resp = await fetch(url);
     var data = await resp.json();
 
-    if (!Array.isArray(data) || data.length === 0) {
-      // Intentar con año anterior
-      url = PROXY_URL + '/api/Cartera/Obtener?anyo=2025&periodo=*&codigo_tercero=' + encodeURIComponent(nit) + '&codigo_local=0&tipo_cartera=*&grupo=*&codigo_clase=0';
-      resp = await fetch(url);
-      data = await resp.json();
-    }
+
 
     if (!Array.isArray(data) || data.length === 0) {
       cont.innerHTML = '<div class="card"><div class="empty">✅ No hay facturas pendientes para este cliente</div></div>';
